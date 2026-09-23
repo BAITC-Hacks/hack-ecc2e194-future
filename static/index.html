@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>AI Sana Challenge Hub — Хакатонные задачи</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: light; }
+    body { background: #f7f8fc; }
+    .tab-btn[aria-selected="true"]  { color: #fff; background: #4338ca; box-shadow: 0 8px 20px #4338ca30; }
+    .tab-btn[aria-selected="false"] { color: #64748b; background: transparent; }
+    .priority-card { border-color: #f97316 !important; box-shadow: 0 0 0 2px #fed7aa, 0 14px 35px #f9731618; }
+    .modal-backdrop { background: rgb(15 23 42 / .56); }
+    input:focus, textarea:focus, select:focus { outline: 2px solid #818cf8; outline-offset: 1px; }
+    .rating-bar { transition: width .35s cubic-bezier(.4,0,.2,1); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased">
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <a href="#" class="flex items-center gap-3" aria-label="AI Sana Challenge Hub">
+      <span class="grid h-11 w-11 place-items-center rounded-2xl bg-indigo-600 text-lg font-black text-white shadow-lg shadow-indigo-600/20">S</span>
+      <span>
+        <span class="block text-sm font-bold tracking-tight text-slate-900">AI Sana <span class="text-indigo-600">/</span> Challenge Hub</span>
+        <span class="text-xs text-slate-500">От бизнес-задачи к решению</span>
+      </span>
+    </a>
+    <nav class="flex w-full gap-2 rounded-2xl bg-slate-100 p-1 sm:w-auto" aria-label="Разделы">
+      <button class="tab-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition sm:flex-none" data-tab="business" aria-selected="true">🏢 Кабинет бизнеса</button>
+      <button class="tab-btn flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition sm:flex-none" data-tab="student"  aria-selected="false">🎓 Каталог студента</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
+
+  <!-- ╔══════════════ BUSINESS PANEL ══════════════╗ -->
+  <section id="business-panel" class="space-y-8" aria-labelledby="biz-title">
+
+    <!-- Intro -->
+    <div class="max-w-3xl">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[.16em] text-indigo-600">Кабинет бизнеса</p>
+      <h1 id="biz-title" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Подготовьте задачу для хакатона</h1>
+      <p class="mt-3 text-slate-600">Опишите задачу своими словами. AI поможет уточнить вводные, а рейтинг покажет готовность карточки.</p>
+    </div>
+
+    <!-- Step 1: Draft -->
+    <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      <div class="mb-4 flex items-start gap-4">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-indigo-50 text-lg">✍️</span>
+        <div>
+          <h2 class="font-bold text-slate-900">1. Черновик задачи</h2>
+          <p class="mt-1 text-sm text-slate-500">Добавьте описание, проблему или бизнес-контекст.</p>
+        </div>
+      </div>
+      <label for="draft-text" class="sr-only">Черновик задачи</label>
+      <textarea id="draft-text" rows="5"
+        class="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 placeholder:text-slate-400"
+        placeholder="Например: хотим сократить время обработки заявок и лучше понимать причины отказов клиентов…"></textarea>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button id="analyze-btn"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60">
+          <span>✨</span> Анализировать через AI
+        </button>
+        <p id="analyze-msg" class="text-sm text-slate-500" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- Step 2: Questions -->
+    <section id="questions-section" class="hidden rounded-3xl border border-indigo-100 bg-indigo-50/60 p-5 sm:p-7">
+      <div class="mb-5">
+        <p class="text-xs font-bold uppercase tracking-[.15em] text-indigo-600">Уточнение задачи</p>
+        <h2 class="mt-1 text-xl font-bold text-slate-900">2. Ответьте на вопросы</h2>
+        <p id="topic-line" class="mt-1 text-sm text-slate-600"></p>
+      </div>
+      <div id="questions-list" class="grid gap-4"></div>
+      <button id="assemble-btn" class="mt-5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
+        Собрать карточку →
+      </button>
+    </section>
+
+    <!-- Step 3: Editor + Rating sidebar -->
+    <section id="editor-section" class="hidden space-y-5">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[.15em] text-indigo-600">Карточка задачи</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-950">3. Проверьте и дополните детали</h2>
+      </div>
+      <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+
+        <!-- Fields -->
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="task-title" class="mb-2 block text-sm font-semibold">Название задачи <span class="font-normal text-rose-500">*</span></label>
+              <input id="task-title" class="w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Краткое и понятное название">
+            </div>
+            <div class="sm:col-span-2">
+              <label for="task-topic" class="mb-2 block text-sm font-semibold">Отрасль <span class="font-normal text-rose-500">*</span></label>
+              <input id="task-topic" class="w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Например: финансы, образование, логистика">
+            </div>
+            <div class="sm:col-span-2">
+              <label for="context_and_need" class="mb-2 block text-sm font-semibold">
+                Контекст и потребность <span class="font-normal text-slate-400">· 20 баллов · мин. 40 символов</span>
+              </label>
+              <textarea id="context_and_need" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Какая проблема есть и почему её важно решить?"></textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="data_and_materials" class="mb-2 block text-sm font-semibold">
+                Данные и материалы <span class="font-normal text-slate-400">· 20 баллов · мин. 20 символов</span>
+              </label>
+              <textarea id="data_and_materials" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Какие данные, API или материалы доступны?"></textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="expected_result" class="mb-2 block text-sm font-semibold">
+                Ожидаемый результат <span class="font-normal text-slate-400">· 15 баллов · мин. 25 символов</span>
+              </label>
+              <textarea id="expected_result" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Что команда должна сделать или показать?"></textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="success_criteria" class="mb-2 block text-sm font-semibold">
+                Критерии успеха <span class="font-normal text-slate-400">· 15 баллов · мин. 20 символов</span>
+              </label>
+              <textarea id="success_criteria" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="По каким показателям оценить решение?"></textarea>
+            </div>
+            <div>
+              <label for="constraints" class="mb-2 block text-sm font-semibold">
+                Ограничения <span class="font-normal text-slate-400">· 10 баллов · мин. 15 символов</span>
+              </label>
+              <textarea id="constraints" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Сроки, стек, доступы"></textarea>
+            </div>
+            <div>
+              <label for="target_users" class="mb-2 block text-sm font-semibold">
+                Пользователи <span class="font-normal text-slate-400">· 10 баллов · мин. 10 символов</span>
+              </label>
+              <textarea id="target_users" data-field rows="3" class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="Для кого создаётся решение?"></textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="contact_and_feedback" class="mb-2 block text-sm font-semibold">
+                Контакт и обратная связь <span class="font-normal text-slate-400">· 10 баллов · email или ссылка</span>
+              </label>
+              <input id="contact_and_feedback" data-field class="field-input w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="name@example.com или https://…">
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating sidebar -->
+        <aside class="h-fit rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-28">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-slate-500">Готовность задачи</p>
+              <div class="mt-2 flex items-baseline gap-1">
+                <span id="rating-value" class="text-6xl font-black tracking-tighter text-slate-950">0</span>
+                <span class="text-lg font-semibold text-slate-400">/100</span>
+              </div>
+            </div>
+            <span id="rating-icon" class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-xl">📋</span>
+          </div>
+          <div class="mt-5 h-3 overflow-hidden rounded-full bg-slate-100">
+            <div id="rating-bar" class="rating-bar h-full w-0 rounded-full bg-rose-500"></div>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <span id="rating-badge" class="inline-flex rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Черновик</span>
+            <span id="rating-level-hint" class="text-xs text-slate-400">0–39 баллов</span>
+          </div>
+
+          <!-- Score breakdown -->
+          <div class="mt-5 border-t border-slate-100 pt-5 space-y-2">
+            <h3 class="text-sm font-bold text-slate-900">Начисленные баллы</h3>
+            <div id="score-breakdown" class="space-y-1.5 text-xs"></div>
+          </div>
+
+          <div class="mt-4 border-t border-slate-100 pt-4">
+            <h3 class="text-sm font-bold text-slate-900">Что ещё заполнить</h3>
+            <ul id="missing-fields" class="mt-3 space-y-2 text-sm text-slate-500"></ul>
+          </div>
+
+          <button id="publish-btn"
+            class="mt-6 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/15 transition hover:bg-emerald-700">
+            Опубликовать в каталог
+          </button>
+          <p id="publish-msg" class="mt-3 text-sm" aria-live="polite"></p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Business inbox -->
+    <section id="business-inbox-section" class="space-y-5">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[.15em] text-indigo-600">Работа с откликами</p>
+          <h2 class="mt-1 text-2xl font-bold text-slate-950">Входящие предложения</h2>
+          <p class="mt-2 text-sm text-slate-600">Просматривайте отклики под задачами и принимайте решение вручную.</p>
+        </div>
+        <button id="reload-biz-tasks" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">↻ Обновить</button>
+      </div>
+      <div id="biz-inbox-msg" class="hidden rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800" aria-live="polite"></div>
+      <div id="biz-tasks-list" class="space-y-5"></div>
+      <div id="empty-biz-tasks" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">В каталоге пока нет задач.</div>
+    </section>
+  </section>
+  <!-- ╚══════════════ /BUSINESS PANEL ══════════════╝ -->
+
+  <!-- ╔══════════════ STUDENT PANEL ══════════════╗ -->
+  <section id="student-panel" class="hidden space-y-7" aria-labelledby="student-title">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="mb-2 text-sm font-semibold uppercase tracking-[.16em] text-indigo-600">Каталог студента</p>
+        <h1 id="student-title" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Найдите задачу для команды</h1>
+        <p class="mt-3 text-slate-600">Изучите задачи и предложите свой подход к решению.</p>
+      </div>
+      <button id="reload-tasks" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">↻ Обновить каталог</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex flex-1 items-center gap-2 min-w-[180px]">
+        <label for="filter-topic" class="text-sm font-semibold text-slate-600 whitespace-nowrap">🏷 Тема:</label>
+        <input id="filter-topic" type="search" placeholder="Фильтр по теме…"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="filter-level" class="text-sm font-semibold text-slate-600 whitespace-nowrap">📊 Уровень:</label>
+        <select id="filter-level" class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+          <option value="">Все уровни</option>
+          <option value="PRIORITY">🔥 Приоритетная (90–100)</option>
+          <option value="READY">✅ Готовая (70–89)</option>
+          <option value="IN_PROGRESS">🔄 Рабочая (40–69)</option>
+          <option value="DRAFT">📋 Черновик (0–39)</option>
+        </select>
+      </div>
+      <button id="apply-filters" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Применить</button>
+      <button id="clear-filters" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Сбросить</button>
+    </div>
+
+    <div id="catalog-msg" class="hidden rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800" aria-live="polite"></div>
+    <div id="tasks-grid" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
+    <div id="empty-catalog" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
+      <span class="text-4xl">🧭</span>
+      <h2 class="mt-4 text-lg font-bold">Нет задач по вашему запросу</h2>
+      <p class="mt-2 text-sm text-slate-500">Попробуйте изменить фильтры или проверьте каталог позже.</p>
+    </div>
+  </section>
+  <!-- ╚══════════════ /STUDENT PANEL ══════════════╝ -->
+
+</main>
+
+<!-- ═══════════════════ PROPOSAL MODAL ═══════════════════ -->
+<div id="proposal-modal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto p-4"
+  role="dialog" aria-modal="true" aria-labelledby="proposal-heading">
+  <div class="my-auto w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[.15em] text-indigo-600">Предложение команды</p>
+        <h2 id="proposal-heading" class="mt-1 text-2xl font-bold text-slate-950">Подать предложение</h2>
+        <p id="proposal-task-title" class="mt-2 text-sm text-slate-500"></p>
+      </div>
+      <button id="close-modal" class="grid h-9 w-9 place-items-center rounded-xl text-xl text-slate-400 hover:bg-slate-100" aria-label="Закрыть">×</button>
+    </div>
+    <form id="proposal-form" class="mt-6 space-y-4">
+      <label class="block">
+        <span class="mb-2 block text-sm font-semibold">Команда <span class="text-rose-500">*</span></span>
+        <select id="proposal-team" required class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm">
+          <option value="">Выберите команду</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="mb-2 block text-sm font-semibold">Идея решения <span class="text-rose-500">*</span></span>
+        <textarea id="proposal-idea" required rows="4"
+          class="w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm"
+          placeholder="Кратко опишите ваш подход к решению задачи"></textarea>
+      </label>
+      <label class="block">
+        <span class="mb-2 block text-sm font-semibold">Ссылка на прототип <span class="font-normal text-slate-400">(если есть)</span></span>
+        <input id="proposal-link" type="url" class="w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm" placeholder="https://…">
+      </label>
+      <p id="proposal-msg" class="text-sm text-slate-500" aria-live="polite"></p>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" id="cancel-modal" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Отмена</button>
+        <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Отправить предложение</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script>
+// ── Constants ─────────────────────────────────────────────
+const FIELD_LABELS = {
+  context_and_need:     'Контекст и потребность',
+  data_and_materials:   'Данные и материалы',
+  expected_result:      'Ожидаемый результат',
+  success_criteria:     'Критерии успеха',
+  constraints:          'Ограничения',
+  target_users:         'Целевые пользователи',
+  contact_and_feedback: 'Контакт и обратная связь'
+};
+const FIELD_POINTS = {
+  context_and_need: 20, data_and_materials: 20, expected_result: 15,
+  success_criteria: 15, constraints: 10, target_users: 10, contact_and_feedback: 10
+};
+const FIELD_MIN = {
+  context_and_need: 40, data_and_materials: 20, expected_result: 25,
+  success_criteria: 20, constraints: 15, target_users: 10
+};
+const LEVEL_META = {
+  DRAFT:       { label: 'Черновик',     hint: '0–39 баллов',   cls: ['bg-rose-50','text-rose-700','bg-rose-500'],       icon: '📋' },
+  IN_PROGRESS: { label: 'Рабочая',      hint: '40–69 баллов',  cls: ['bg-amber-50','text-amber-700','bg-amber-500'],     icon: '🔄' },
+  READY:       { label: 'Готовая',      hint: '70–89 баллов',  cls: ['bg-emerald-50','text-emerald-700','bg-emerald-500'],icon: '✅' },
+  PRIORITY:    { label: 'Приоритетная', hint: '90–100 баллов', cls: ['bg-orange-50','text-orange-700','bg-orange-500'],   icon: '🔥' }
+};
+
+// ── State ─────────────────────────────────────────────────
+let analyzedQuestions = [];
+let selectedTask = null;
+
+// ── Tab switching ─────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+    document.getElementById('business-panel').classList.toggle('hidden', btn.dataset.tab !== 'business');
+    document.getElementById('student-panel').classList.toggle('hidden', btn.dataset.tab !== 'student');
+    if (btn.dataset.tab === 'student')  loadCatalog();
+    if (btn.dataset.tab === 'business') loadBizTasks();
+  });
+});
+
+// ─────────────────────────────────────────
+//  Step 1 — AI Draft Analysis
+// ─────────────────────────────────────────
+document.getElementById('analyze-btn').addEventListener('click', async () => {
+  const draft = document.getElementById('draft-text').value.trim();
+  const btn   = document.getElementById('analyze-btn');
+  const msg   = document.getElementById('analyze-msg');
+  if (!draft) { msg.textContent = 'Сначала добавьте черновик задачи.'; return; }
+  btn.disabled = true;
+  msg.textContent = 'Анализируем черновик…';
+  try {
+    const resp = await fetch('/api/ai/analyze-draft', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ draft_text: draft })
+    });
+    if (!resp.ok) throw new Error('Сервер вернул ' + resp.status);
+    const result = await resp.json();
+    if (!Array.isArray(result.questions) || result.questions.length < 3)
+      throw new Error('Некорректный ответ анализа');
+    analyzedQuestions = result.questions;
+    renderQuestions(result);
+    msg.textContent = '✓ Анализ готов. Ответьте на уточняющие вопросы ниже.';
+  } catch (e) {
+    msg.textContent = '⚠ Не удалось выполнить анализ: ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function renderQuestions(result) {
+  const list = document.getElementById('questions-list');
+  list.replaceChildren();
+  document.getElementById('topic-line').textContent = 'Определённая отрасль: ' + (result.topic || 'не указана');
+  result.questions.forEach((q, i) => {
+    const label = document.createElement('label'); label.className = 'block';
+    const caption = document.createElement('span');
+    caption.className = 'mb-2 block text-sm font-semibold text-slate-800';
+    caption.textContent = q.text || q.question || ('Уточнение ' + (i + 1));
+    const answer = document.createElement('textarea');
+    answer.className = 'answer-input w-full rounded-xl border border-indigo-100 bg-white px-3.5 py-3 text-sm';
+    answer.rows = 2; answer.dataset.index = i; answer.placeholder = 'Ответ бизнеса';
+    label.append(caption, answer);
+    list.append(label);
+  });
+  const sec = document.getElementById('questions-section');
+  sec.classList.remove('hidden');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─────────────────────────────────────────
+//  Step 2 — Assemble card
+// ─────────────────────────────────────────
+document.getElementById('assemble-btn').addEventListener('click', () => {
+  const draft = document.getElementById('draft-text').value.trim();
+  const answers = [...document.querySelectorAll('.answer-input')].map(i => i.value.trim());
+  const byField = {};
+  analyzedQuestions.forEach((q, i) => { if (q.field) byField[q.field] = answers[i]; });
+  const combined = (field, fallback) => [fallback, byField[field]].filter(Boolean).join('\n\n');
+  document.getElementById('context_and_need').value     = draft;
+  document.getElementById('data_and_materials').value   = combined('data_and_materials', '');
+  document.getElementById('expected_result').value      = combined('expected_result', '');
+  document.getElementById('success_criteria').value     = combined('success_criteria', '');
+  document.getElementById('constraints').value          = byField.constraints || '';
+  document.getElementById('target_users').value         = byField.target_users || '';
+  document.getElementById('contact_and_feedback').value = byField.contact_and_feedback || '';
+  const topicInput = document.getElementById('task-topic');
+  if (!topicInput.value) {
+    topicInput.value = document.getElementById('topic-line').textContent.replace('Определённая отрасль: ', '');
+  }
+  const editor = document.getElementById('editor-section');
+  editor.classList.remove('hidden');
+  updateRating();
+  editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// ─────────────────────────────────────────
+//  Rating widget
+// ─────────────────────────────────────────
+document.querySelectorAll('[data-field]').forEach(el => el.addEventListener('input', scheduleRating));
+
+let ratingTimer;
+function scheduleRating() { clearTimeout(ratingTimer); ratingTimer = setTimeout(updateRating, 180); }
+
+async function updateRating() {
+  const fields = Object.fromEntries(
+    [...document.querySelectorAll('[data-field]')].map(el => [el.id, el.value])
+  );
+  // Local quick calculation
+  let rating = 0, missing = [];
+  Object.keys(FIELD_POINTS).forEach(key => {
+    const val = (fields[key] || '').trim();
+    const ok = key === 'contact_and_feedback'
+      ? val.includes('@') || val.includes('http')
+      : [...val].length >= (FIELD_MIN[key] || 0);
+    if (ok) rating += FIELD_POINTS[key]; else missing.push(key);
+  });
+  let level = rating >= 90 ? 'PRIORITY' : rating >= 70 ? 'READY' : rating >= 40 ? 'IN_PROGRESS' : 'DRAFT';
+  paintRating(rating, level, missing, fields);
+
+  // Sync with server
+  try {
+    const resp = await fetch('/api/tasks/calculate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    });
+    if (resp.ok) {
+      const r = await resp.json();
+      paintRating(r.rating, r.readiness_level, r.empty_fields || missing, fields);
+    }
+  } catch (_) { /* use local calc */ }
+}
+
+function paintRating(rating, level, missing, fields) {
+  const meta = LEVEL_META[level] || LEVEL_META.DRAFT;
+  document.getElementById('rating-value').textContent = rating;
+  const bar = document.getElementById('rating-bar');
+  bar.style.width = rating + '%';
+  bar.className = 'rating-bar h-full rounded-full ' + meta.cls[2];
+  const badge = document.getElementById('rating-badge');
+  badge.className = 'inline-flex rounded-full px-3 py-1 text-xs font-bold ' + meta.cls[0] + ' ' + meta.cls[1];
+  badge.textContent = meta.label;
+  document.getElementById('rating-level-hint').textContent = meta.hint;
+  document.getElementById('rating-icon').textContent = meta.icon;
+
+  // Score breakdown
+  const breakdown = document.getElementById('score-breakdown');
+  breakdown.replaceChildren();
+  Object.keys(FIELD_POINTS).forEach(key => {
+    const val = (fields && fields[key] || '').trim();
+    const ok = key === 'contact_and_feedback'
+      ? val.includes('@') || val.includes('http')
+      : [...val].length >= (FIELD_MIN[key] || 0);
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between gap-2';
+    const name = document.createElement('span'); name.className = 'text-slate-500'; name.textContent = FIELD_LABELS[key];
+    const pts  = document.createElement('span');
+    pts.className = 'font-bold ' + (ok ? 'text-emerald-600' : 'text-slate-300');
+    pts.textContent = (ok ? '+' : '0/') + FIELD_POINTS[key];
+    row.append(name, pts); breakdown.append(row);
+  });
+
+  // Missing fields
+  const list = document.getElementById('missing-fields');
+  list.replaceChildren();
+  if (!missing.length) {
+    const li = document.createElement('li'); li.className = 'text-emerald-700 text-sm';
+    li.textContent = '✓ Все поля заполнены'; list.append(li);
+  } else {
+    missing.forEach(key => {
+      const li = document.createElement('li'); li.className = 'flex gap-2 text-sm';
+      const dot = document.createElement('span'); dot.className = 'text-rose-500'; dot.textContent = '•';
+      li.append(dot, document.createTextNode(FIELD_LABELS[key] || key));
+      list.append(li);
+    });
+  }
+
+  // Publish button — always enabled but warns if low rating
+  const pubBtn = document.getElementById('publish-btn');
+  pubBtn.disabled = false;
+  if (rating < 40) {
+    pubBtn.className = pubBtn.className.replace(/bg-\w+-\d+/g, '') + ' bg-amber-500';
+    pubBtn.textContent = 'Опубликовать (черновик)';
+  } else {
+    pubBtn.className = pubBtn.className.replace(/bg-\w+-\d+/g, '') + ' bg-emerald-600';
+    pubBtn.textContent = 'Опубликовать в каталог';
+  }
+}
+
+// ─────────────────────────────────────────
+//  Publish
+// ─────────────────────────────────────────
+document.getElementById('publish-btn').addEventListener('click', async () => {
+  const msg    = document.getElementById('publish-msg');
+  const fields = Object.fromEntries([...document.querySelectorAll('[data-field]')].map(el => [el.id, el.value]));
+  const title  = document.getElementById('task-title').value.trim();
+  const topic  = document.getElementById('task-topic').value.trim();
+  if (!title)  { msg.textContent = '⚠ Заполните название задачи.';       msg.className = 'mt-3 text-sm text-rose-600'; return; }
+  if (!topic)  { msg.textContent = '⚠ Укажите отрасль.';                 msg.className = 'mt-3 text-sm text-rose-600'; return; }
+  msg.textContent = 'Публикуем…'; msg.className = 'mt-3 text-sm text-slate-500';
+  try {
+    const resp = await fetch('/api/tasks', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, topic, fields, status: 'published' })
+    });
+    if (!resp.ok) { const text = await resp.text(); throw new Error(text || resp.status); }
+    const task = await resp.json();
+    msg.textContent = '✓ Задача опубликована! Рейтинг: ' + task.rating + '/100';
+    msg.className = 'mt-3 text-sm text-emerald-600';
+    // Reset form
+    document.getElementById('draft-text').value = '';
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-topic').value = '';
+    document.querySelectorAll('[data-field]').forEach(el => el.value = '');
+    document.querySelectorAll('.answer-input').forEach(el => el.value = '');
+    document.getElementById('questions-section').classList.add('hidden');
+    document.getElementById('editor-section').classList.add('hidden');
+    updateRating();
+    // Reload inbox
+    loadBizTasks();
+    document.getElementById('business-inbox-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    msg.textContent = '⚠ Ошибка публикации: ' + e.message;
+    msg.className = 'mt-3 text-sm text-rose-600';
+  }
+});
+
+// ─────────────────────────────────────────
+//  Business inbox
+// ─────────────────────────────────────────
+async function loadBizTasks() {
+  const list = document.getElementById('biz-tasks-list');
+  const msg  = document.getElementById('biz-inbox-msg');
+  list.replaceChildren(); msg.classList.add('hidden');
+  try {
+    const resp = await fetch('/api/tasks');
+    if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
+    const tasks = await resp.json();
+    document.getElementById('empty-biz-tasks').classList.toggle('hidden', tasks.length > 0);
+    tasks.forEach(t => list.append(renderBizTask(t)));
+  } catch (e) {
+    msg.textContent = 'Не удалось загрузить задачи: ' + e.message;
+    msg.classList.remove('hidden');
+    document.getElementById('empty-biz-tasks').classList.add('hidden');
+  }
+}
+
+function renderBizTask(task) {
+  const meta = LEVEL_META[task.readiness_level] || LEVEL_META.DRAFT;
+  const section = document.createElement('section');
+  section.className = 'rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6';
+
+  const header = document.createElement('div');
+  header.className = 'flex flex-col gap-2 border-b border-slate-100 pb-4 sm:flex-row sm:items-start sm:justify-between';
+  const titleBlock = document.createElement('div');
+  const title = document.createElement('h3'); title.className = 'font-bold text-slate-950 text-lg'; title.textContent = task.title || 'Задача';
+  const topic = document.createElement('p'); topic.className = 'mt-0.5 text-sm text-slate-500'; topic.textContent = task.topic || 'Отрасль не указана';
+  titleBlock.append(title, topic);
+  const badgeWrap = document.createElement('div'); badgeWrap.className = 'flex items-center gap-2 flex-shrink-0';
+  const ratingSpan = document.createElement('span');
+  ratingSpan.className = 'text-sm font-bold text-slate-600'; ratingSpan.textContent = task.rating + '/100';
+  const levelBadge = document.createElement('span');
+  levelBadge.className = 'rounded-full px-3 py-1 text-xs font-bold ' + meta.cls[0] + ' ' + meta.cls[1];
+  levelBadge.textContent = meta.label;
+  badgeWrap.append(ratingSpan, levelBadge);
+  header.append(titleBlock, badgeWrap);
+
+  const proposalsDiv = document.createElement('div');
+  proposalsDiv.className = 'mt-4 space-y-3';
+  proposalsDiv.dataset.taskId = task.id;
+  const loading = document.createElement('p'); loading.className = 'text-sm text-slate-400'; loading.textContent = 'Загружаем отклики…';
+  proposalsDiv.append(loading);
+
+  section.append(header, proposalsDiv);
+  loadProposalsForTask(task.id, proposalsDiv);
+  return section;
+}
+
+async function loadProposalsForTask(taskId, container) {
+  try {
+    const resp = await fetch('/api/tasks/' + encodeURIComponent(taskId) + '/proposals');
+    if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
+    const proposals = await resp.json();
+    container.replaceChildren();
+    if (!proposals.length) {
+      const empty = document.createElement('p'); empty.className = 'text-sm text-slate-400';
+      empty.textContent = 'Откликов пока нет.'; container.append(empty); return;
+    }
+    proposals.forEach(p => container.append(renderProposal(p)));
+  } catch (e) {
+    container.replaceChildren();
+    const err = document.createElement('p'); err.className = 'text-sm text-rose-600';
+    err.textContent = 'Не удалось загрузить отклики: ' + e.message; container.append(err);
+  }
+}
+
+function renderProposal(proposal) {
+  const card = document.createElement('article');
+  card.className = 'rounded-2xl border border-slate-200 bg-slate-50/70 p-4';
+  const top = document.createElement('div'); top.className = 'flex flex-wrap items-center justify-between gap-2';
+  const team = document.createElement('h4'); team.className = 'font-semibold text-slate-900';
+  team.textContent = proposal.team_name || proposal.team_id || 'Команда';
+  const statusEl = document.createElement('span'); statusEl.className = 'proposal-status rounded-full px-3 py-1 text-xs font-bold';
+  setProposalStatus(statusEl, proposal.status);
+  top.append(team, statusEl);
+  const idea = document.createElement('p'); idea.className = 'mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700';
+  idea.textContent = proposal.solution_idea || '';
+  card.append(top, idea);
+  if (proposal.plan) {
+    const link = document.createElement('a');
+    link.className = 'mt-2 inline-flex text-sm font-semibold text-indigo-600 underline decoration-indigo-200 underline-offset-4 hover:text-indigo-800';
+    link.href = proposal.plan; link.target = '_blank'; link.rel = 'noopener noreferrer';
+    link.textContent = '🔗 Открыть прототип'; card.append(link);
+  }
+  const actions = document.createElement('div'); actions.className = 'proposal-actions mt-4 flex gap-2';
+  if (proposal.status === 'PENDING') {
+    const accept = document.createElement('button');
+    accept.className = 'rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700';
+    accept.textContent = '✓ Принять';
+    accept.addEventListener('click', () => decideProposal(proposal, 'ACCEPTED', statusEl, actions));
+    const reject = document.createElement('button');
+    reject.className = 'rounded-lg border border-rose-200 bg-white px-3.5 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50';
+    reject.textContent = '✕ Отклонить';
+    reject.addEventListener('click', () => decideProposal(proposal, 'REJECTED', statusEl, actions));
+    actions.append(accept, reject);
+  }
+  card.append(actions);
+  return card;
+}
+
+function setProposalStatus(el, value) {
+  const s = String(value || 'PENDING').toUpperCase();
+  const styles = { PENDING: 'bg-amber-100 text-amber-800', ACCEPTED: 'bg-emerald-100 text-emerald-800', REJECTED: 'bg-rose-100 text-rose-800' };
+  const labels = { PENDING: 'Ожидает', ACCEPTED: 'Принято', REJECTED: 'Отклонено' };
+  el.className = 'proposal-status rounded-full px-3 py-1 text-xs font-bold ' + (styles[s] || 'bg-slate-100 text-slate-700');
+  el.textContent = labels[s] || s;
+}
+
+async function decideProposal(proposal, decision, statusEl, actions) {
+  const buttons = [...actions.querySelectorAll('button')];
+  buttons.forEach(b => b.disabled = true);
+  try {
+    const resp = await fetch('/api/proposals/' + encodeURIComponent(proposal.id) + '/decision', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: decision })
+    });
+    if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
+    proposal.status = decision;
+    setProposalStatus(statusEl, decision);
+    actions.replaceChildren();
+  } catch (e) {
+    buttons.forEach(b => b.disabled = false);
+    const msg = document.getElementById('biz-inbox-msg');
+    msg.textContent = 'Не удалось обновить статус: ' + e.message;
+    msg.classList.remove('hidden');
+  }
+}
+
+// ─────────────────────────────────────────
+//  Student catalog
+// ─────────────────────────────────────────
+async function loadCatalog() {
+  const grid = document.getElementById('tasks-grid');
+  const msg  = document.getElementById('catalog-msg');
+  grid.replaceChildren(); msg.classList.add('hidden');
+  const topic = document.getElementById('filter-topic').value.trim();
+  const level = document.getElementById('filter-level').value;
+  const params = new URLSearchParams();
+  if (topic) params.set('topic', topic);
+  if (level) params.set('level', level);
+  const url = '/api/tasks' + (params.toString() ? '?' + params.toString() : '');
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
+    const tasks = await resp.json();
+    document.getElementById('empty-catalog').classList.toggle('hidden', tasks.length > 0);
+    tasks.forEach(t => grid.append(renderTaskCard(t)));
+  } catch (e) {
+    msg.textContent = 'Не удалось загрузить каталог: ' + e.message;
+    msg.classList.remove('hidden');
+    document.getElementById('empty-catalog').classList.add('hidden');
+  }
+}
+
+function renderTaskCard(task) {
+  const meta = LEVEL_META[task.readiness_level] || LEVEL_META.DRAFT;
+  const isPriority = task.readiness_level === 'PRIORITY';
+  const card = document.createElement('article');
+  card.className = 'flex h-full flex-col rounded-3xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' +
+    (isPriority ? 'priority-card' : 'border-slate-200');
+
+  const top = document.createElement('div'); top.className = 'flex items-start justify-between gap-3';
+  const topicSpan = document.createElement('span');
+  topicSpan.className = 'rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700';
+  topicSpan.textContent = task.topic || 'Без темы';
+  const badge = document.createElement('span');
+  badge.className = 'rounded-full px-3 py-1 text-xs font-bold ' + meta.cls[0] + ' ' + meta.cls[1];
+  badge.textContent = meta.icon + ' ' + meta.label;
+  top.append(topicSpan, badge);
+
+  const title = document.createElement('h2');
+  title.className = 'mt-4 text-lg font-bold text-slate-950'; title.textContent = task.title || 'Задача хакатона';
+
+  const detail = document.createElement('p');
+  detail.className = 'mt-2 line-clamp-4 flex-1 whitespace-pre-line text-sm leading-6 text-slate-600';
+  const f = task.fields || {};
+  detail.textContent = f.context_and_need || f.data_and_materials || 'Откройте предложение, чтобы поделиться идеей решения.';
+
+  // Rating bar mini
+  const ratingRow = document.createElement('div'); ratingRow.className = 'mt-4 space-y-1';
+  const ratingLbl = document.createElement('div'); ratingLbl.className = 'flex justify-between text-xs text-slate-500';
+  ratingLbl.innerHTML = '<span>Рейтинг готовности</span><span class="font-semibold">' + (task.rating || 0) + '/100</span>';
+  const ratingTrack = document.createElement('div'); ratingTrack.className = 'h-1.5 rounded-full bg-slate-100';
+  const ratingFill  = document.createElement('div');
+  ratingFill.className = 'h-full rounded-full ' + meta.cls[2];
+  ratingFill.style.width = (task.rating || 0) + '%';
+  ratingTrack.append(ratingFill);
+  ratingRow.append(ratingLbl, ratingTrack);
+
+  const footer = document.createElement('div');
+  footer.className = 'mt-4 flex items-center justify-between border-t border-slate-100 pt-4';
+  const offerBtn = document.createElement('button');
+  offerBtn.className = 'rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700';
+  offerBtn.textContent = 'Подать предложение';
+  offerBtn.addEventListener('click', () => openProposalModal(task));
+  footer.append(document.createElement('span'), offerBtn); // spacer + button
+
+  card.append(top, title, detail, ratingRow, footer);
+  return card;
+}
+
+// ─────────────────────────────────────────
+//  Filters
+// ─────────────────────────────────────────
+document.getElementById('apply-filters').addEventListener('click', loadCatalog);
+document.getElementById('filter-topic').addEventListener('keydown', e => { if (e.key === 'Enter') loadCatalog(); });
+document.getElementById('clear-filters').addEventListener('click', () => {
+  document.getElementById('filter-topic').value = '';
+  document.getElementById('filter-level').value = '';
+  loadCatalog();
+});
+document.getElementById('reload-tasks').addEventListener('click', loadCatalog);
+
+// ─────────────────────────────────────────
+//  Proposal modal
+// ─────────────────────────────────────────
+async function openProposalModal(task) {
+  selectedTask = task;
+  document.getElementById('proposal-task-title').textContent = task.title || '';
+  document.getElementById('proposal-msg').textContent = '';
+  document.getElementById('proposal-idea').value = '';
+  document.getElementById('proposal-link').value = '';
+  const select = document.getElementById('proposal-team');
+  select.replaceChildren(new Option('Выберите команду', ''));
+  try {
+    const resp = await fetch('/api/teams');
+    if (!resp.ok) throw new Error('unavailable');
+    const teams = await resp.json();
+    teams.forEach(t => select.add(new Option(t.name + (t.focus ? ' — ' + t.focus : ''), t.id)));
+  } catch (_) {
+    [['team-1','Data Pioneers'],['team-2','Code Crafters'],['team-3','Green Minds'],
+     ['team-4','Route Masters'],['team-5','Edu Innovators']]
+      .forEach(([id, name]) => select.add(new Option(name, id)));
+  }
+  const modal = document.getElementById('proposal-modal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+  select.focus();
+}
+
+function closeModal() {
+  const modal = document.getElementById('proposal-modal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+
+document.getElementById('close-modal').addEventListener('click', closeModal);
+document.getElementById('cancel-modal').addEventListener('click', closeModal);
+document.getElementById('proposal-modal').addEventListener('click', e => { if (e.target.id === 'proposal-modal') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('proposal-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!selectedTask) return;
+  const msg = document.getElementById('proposal-msg');
+  msg.textContent = 'Отправляем…'; msg.className = 'text-sm text-slate-500';
+  const body = {
+    task_id:      selectedTask.id,
+    team_id:      document.getElementById('proposal-team').value,
+    solution_idea: document.getElementById('proposal-idea').value.trim(),
+    plan:          document.getElementById('proposal-link').value.trim()
+  };
+  try {
+    const resp = await fetch('/api/proposals', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) { const text = await resp.text(); throw new Error(text || resp.status); }
+    msg.textContent = '✓ Предложение отправлено!'; msg.className = 'text-sm text-emerald-600';
+    e.target.reset();
+    setTimeout(closeModal, 1200);
+  } catch (err) {
+    msg.textContent = '⚠ ' + err.message; msg.className = 'text-sm text-rose-600';
+  }
+});
+
+// ─────────────────────────────────────────
+//  Reload buttons
+// ─────────────────────────────────────────
+document.getElementById('reload-biz-tasks').addEventListener('click', loadBizTasks);
+
+// ─────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────
+loadBizTasks();
+updateRating();
+</script>
+</body>
+</html>

@@ -3,158 +3,233 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Sana Challenge Hub — от бизнес-задачи к решению</title>
+  <title>Точка Сборки — от бизнес-задачи к решению</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    *, *::before, *::after { box-sizing: border-box; }
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
     :root {
-      --indigo: #4f46e5;
-      --indigo-dark: #3730a3;
       color-scheme: light;
+      --ink: #172f38;
+      --muted: #596d71;
+      --accent: #126b63;
+      --line: #dee7e4;
+      --paper: #f5f7f4;
     }
+    *, *::before, *::after { box-sizing: border-box; }
     body {
-      min-height: 100vh;
-      font-family: 'Inter', system-ui, sans-serif;
-      isolation: isolate;
-      background-color: #f8fafc;
-      background-image:
-        radial-gradient(ellipse at 8% 2%, rgba(99,102,241,.14), transparent 34rem),
-        radial-gradient(ellipse at 96% 24%, rgba(139,92,246,.12), transparent 30rem),
-        radial-gradient(ellipse at 46% 100%, rgba(14,165,233,.08), transparent 36rem),
-        linear-gradient(145deg, #f8fafc 0%, #f1f5f9 48%, #f8fafc 100%);
-      background-attachment: fixed;
+      margin: 0; min-height: 100vh; color: var(--ink);
+      font-family: 'Manrope', system-ui, sans-serif;
+      background: radial-gradient(ellipse at 100% 0, #e3ede4 0, transparent 44rem), var(--paper);
     }
-    body::before {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      content: "";
-      background-image:
-        linear-gradient(rgba(99,102,241,.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(99,102,241,.035) 1px, transparent 1px);
-      background-size: 36px 36px;
-      mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
+    ::selection { background: #bce8d9; color: #163d37; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    button, a { touch-action: manipulation; }
+    button:focus-visible, a:focus-visible, summary:focus-visible {
+      outline: 3px solid #30a69b; outline-offset: 4px;
     }
-    .hero-panel {
-      isolation: isolate;
+    input, textarea, select { transition: border-color .15s, box-shadow .15s; }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px #126b6315;
     }
-    .hero-panel::after {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      content: "";
-      background:
-        radial-gradient(circle at 78% 18%, rgba(255,255,255,.2), transparent 15rem),
-        radial-gradient(circle at 28% 115%, rgba(129,140,248,.3), transparent 24rem);
-    }
-    .hero-sidecard {
-      width: min(100%, 18rem);
-      flex: 0 0 auto;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 1.25rem;
-      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 16px 40px rgba(30,27,75,.14);
-      backdrop-filter: blur(12px);
-    }
-    .hero-step-number {
-      display: grid;
-      width: 1.7rem;
-      height: 1.7rem;
-      flex: 0 0 auto;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,.24);
-      border-radius: .65rem;
-      background: rgba(255,255,255,.12);
-      color: white;
-      font-size: .7rem;
-      font-weight: 800;
-    }
-
-    header {
-      box-shadow: 0 1px 0 rgba(148,163,184,.12), 0 12px 32px rgba(15,23,42,.045);
-    }
-
-    /* ── Tabs ── */
-    .tab-btn { transition: all .2s; }
-    .tab-btn[aria-selected="true"]  { background: #fff; color: #1e293b; box-shadow: 0 1px 4px #00000018; }
-    .tab-btn[aria-selected="false"] { color: #64748b; }
-    .tab-btn[aria-selected="false"]:hover { color: #4338ca; background: rgba(255,255,255,.62); }
-
-    /* ── Wizard steps ── */
-    .step-dot { transition: all .25s; }
-    .step-dot.done  { background: #10b981; }
-    .step-dot.active { background: #4f46e5; box-shadow: 0 0 0 4px #4f46e520; }
-    .step-dot.idle  { background: #e2e8f0; }
-    .step-line { transition: background .3s; }
-
-    /* ── Rating gauge ── */
-    .gauge-ring { transform: rotate(-90deg); transform-origin: 50% 50%; }
-    .gauge-progress { transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1); }
-
-    /* ── Cards ── */
-    .task-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-    .task-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(30,41,59,.12); }
-    .priority-ring { box-shadow: 0 0 0 2px #fed7aa, 0 0 0 5px rgba(255,237,213,.72), 0 18px 42px rgba(249,115,22,.09); }
-
-    #step1-card, #questions-section, #tasks-grid > article,
-    #student-panel > .flex, #empty-catalog {
-      box-shadow: 0 16px 38px rgba(30,41,59,.055);
-    }
-    #biz-tasks-list > article { box-shadow: 0 8px 24px rgba(30,41,59,.045); }
-    .proposal-toggle { transition: color .15s, background .15s, border-color .15s; }
-    .proposal-toggle:not(:disabled):hover { border-color: #c7d2fe; background: #eef2ff; color: #4338ca; }
+    textarea { resize: vertical; }
+    [id] { scroll-margin-top: 100px; }
+    .skip-link { position: fixed; top: -100px; left: 16px; z-index: 110; background: white; padding: 12px 20px; border-radius: 10px; }
+    .skip-link:focus { top: 12px; }
+    .site-header { position: sticky; top: 0; z-index: 40; background: #f9fbf8f2; border-bottom: 1px solid var(--line); backdrop-filter: blur(16px); }
+    .header-inner { max-width: 1280px; margin: auto; padding: 17px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; }
+    .brand-mark { width: 42px; height: 42px; border-radius: 13px; background: var(--ink); display: grid; place-items: center; color: #b6edd8; }
+    .brand-name { font-size: 19px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-subtitle { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+    .header-note { color: var(--muted); font-size: 12px; margin-left: auto; }
+    .tab-nav { display: flex; padding: 4px; gap: 4px; background: #eaf0ec; border: 1px solid #e0e8e3; border-radius: 13px; }
+    .tab-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 17px; border-radius: 9px; font-size: 13px; font-weight: 700; transition: background .2s, color .2s; }
+    .tab-btn svg { width: 17px; height: 17px; }
+    .tab-btn[aria-selected="true"] { background: white; color: var(--accent); box-shadow: 0 2px 5px #183a3010; }
+    .tab-btn[aria-selected="false"] { color: var(--muted); }
+    .tab-btn:hover { color: var(--accent); }
+    .workspace-line { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; color: var(--muted); }
+    .workspace-line strong { color: var(--ink); font-weight: 600; }
+    .workspace-line .divider { margin: 0 10px; color: #b5c2bd; }
+    .workspace-tag { display: flex; align-items: center; gap: 7px; }
+    .workspace-tag::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .hero-panel { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, .75fr); gap: 48px; align-items: center; overflow: hidden; border-radius: 24px; padding: 44px 48px; color: white; background: #183c42; }
+    .hero-panel::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 90% 100%, #35786d80, transparent 60%); }
+    .hero-panel::after { content: ""; position: absolute; width: 480px; height: 480px; border: 1px solid #d1f8e712; border-radius: 50%; right: -85px; top: -230px; z-index: -1; box-shadow: 0 0 0 60px #d1f8e708, 0 0 0 120px #d1f8e704; pointer-events: none; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; font-size: 10px; letter-spacing: 1.8px; font-weight: 700; text-transform: uppercase; color: #b6d8cd; }
+    .eyebrow::before { content: ""; height: 6px; width: 6px; background: #b6edd8; border-radius: 50%; }
+    .hero-title { margin: 16px 0; font-size: clamp(28px, 3.5vw, 45px); line-height: 1.2; font-weight: 800; letter-spacing: -1.6px; }
+    .hero-title em { color: #b6edd8; font-style: normal; }
+    .hero-description { max-width: 510px; color: #c1d7d5; font-size: 13px; line-height: 1.9; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 25px; font-size: 11px; color: #c4dad6; }
+    .hero-tags span { display: flex; align-items: center; gap: 6px; }
+    .hero-tags span::before { content: "↗"; color: #b6edd8; font-size: 14px; }
+    .brief-preview { border: 1px solid #ffffff26; background: #ffffff09; padding: 24px; border-radius: 17px; transform: rotate(2deg); box-shadow: 0 18px 35px #071e2420; }
+    .preview-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: #b4cec9; }
+    .preview-top svg { width: 19px; height: 19px; }
+    .brief-preview h2 { margin: 20px 0 16px; font-size: 18px; font-weight: 700; line-height: 1.5; letter-spacing: -.4px; }
+    .brief-preview ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .brief-preview li { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #deebe6; }
+    .brief-preview li::before { content: "✓"; display: grid; place-items: center; width: 19px; height: 19px; color: #b6edd8; background: #b6edd811; border: 1px solid #b6edd820; border-radius: 5px; }
+    .preview-bottom { border-top: 1px solid #ffffff1a; padding-top: 15px; margin-top: 20px; display: flex; justify-content: space-between; font-size: 10px; color: #b4cec9; }
+    .preview-bottom strong { color: #b6edd8; font-weight: 600; }
+    .workflow { display: grid; grid-template-columns: 1fr 26px 1fr 26px 1fr 26px 1fr; align-items: center; gap: 12px; padding: 20px 26px; background: #ffffffb8; border: 1px solid var(--line); border-radius: 16px; }
+    .workflow-item { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .workflow-item p { font-size: 12px; font-weight: 700; color: var(--ink); }
+    .workflow-item small { display: block; margin-top: 3px; font-size: 10px; color: var(--muted); }
+    .step-dot { display: grid; place-items: center; flex: 0 0 32px; height: 32px; border-radius: 10px; font-size: 12px; font-weight: 700; transition: background .2s; }
+    .step-dot.done { background: #126b63; color: white; }
+    .step-dot.active { background: #183c42; color: white; box-shadow: 0 0 0 4px #183c4209; }
+    .step-dot.idle { background: #eaf0ec; color: #72857e; }
+    .step-line { height: 1px; background: var(--line); }
+    .surface { border: 1px solid var(--line); background: white; border-radius: 20px; box-shadow: 0 4px 20px #14372b03; }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .section-heading h2 { font-size: 18px; font-weight: 800; letter-spacing: -.5px; color: var(--ink); }
+    .section-heading p { margin-top: 5px; font-size: 12px; line-height: 1.7; color: var(--muted); }
+    .section-icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: #eef5f0; color: var(--accent); flex-shrink: 0; }
+    .section-icon svg { width: 19px; height: 19px; }
+    .draft-area { display: block; width: 100%; min-height: 156px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 12px; background: #fafcf9; font-size: 14px; line-height: 1.9; color: var(--ink); }
+    .draft-area::placeholder { color: #7d8b89; }
+    .draft-footer { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+    .draft-hint { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 12px 20px; border-radius: 10px; background: var(--accent); color: white; font-size: 12px; font-weight: 700; transition: background .15s, transform .15s; }
+    .btn-primary:hover { background: #0c554f; }
+    .btn-primary:active { transform: translateY(1px); }
+    .btn-primary:disabled { opacity: .55; cursor: wait; }
+    .btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; border: 1px solid var(--line); padding: 9px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; background: white; color: var(--muted); transition: background .15s; }
+    .btn-secondary:hover { background: #edf4ef; color: var(--accent); }
+    .text-button { color: var(--accent); font-size: 11px; font-weight: 700; padding: 8px; border-radius: 6px; }
+    .text-button:hover { background: #edf4ef; }
+    #questions-section { background: #edf5ef; border-color: #dce9df; }
+    #editor-section > .grid > aside { border-top: 3px solid var(--accent); }
+    .inbox-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 16px; }
+    .inbox-header h2 { font-size: 17px; font-weight: 800; letter-spacing: -.4px; }
+    .inbox-header p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; margin-left: 7px; padding: 0 6px; background: #e8efea; color: var(--accent); border-radius: 7px; font-size: 11px; font-weight: 700; vertical-align: middle; }
+    #biz-tasks-list { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: white; }
+    #biz-tasks-list:empty { display: none; }
+    .biz-task + .biz-task { border-top: 1px solid #e8eeea; }
+    .biz-task-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 20px 24px; }
+    .biz-task-title { min-width: 0; }
+    .biz-task-title h3 { font-size: 13px; font-weight: 700; line-height: 1.6; overflow-wrap: anywhere; }
+    .biz-task-title p { margin-top: 4px; font-size: 11px; color: var(--muted); }
+    .biz-task-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .biz-task-meta > .rating-small { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .proposal-toggle { display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 125px; min-height: 38px; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--line); color: var(--accent); background: #f5f9f6; font-size: 11px; font-weight: 700; }
+    .proposal-toggle:hover { background: #eaf3ed; }
+    .proposal-toggle:disabled { color: var(--muted); background: transparent; }
     .proposal-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
-    .proposal-toggle svg { transition: transform .2s ease; }
-
+    .proposal-toggle svg { transition: transform .2s; }
+    .proposal-empty { min-width: 125px; font-size: 11px; color: var(--muted); }
+    .catalog-filters { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, .8fr) auto; align-items: end; gap: 16px; padding: 22px; }
+    .filter-field { min-width: 0; }
+    .filter-field label { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .filter-field input, .filter-field select { width: 100%; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: #fafcf9; font-size: 12px; color: var(--ink); text-overflow: ellipsis; }
+    .filter-actions { display: flex; align-items: center; gap: 4px; }
+    .catalog-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); font-size: 11px; }
+    #catalog-result-count { color: var(--ink); font-size: 13px; font-weight: 700; }
+    .task-card { display: flex; flex-direction: column; border: 1px solid var(--line); background: white; border-radius: 18px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+    .task-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px #1c4a3f0c; }
+    .task-card.priority-ring { border-color: #d8ac61; box-shadow: inset 0 3px 0 #d8ac61; }
+    .task-card-body { display: flex; flex-direction: column; flex: 1; padding: 24px; }
+    .task-card h2 { margin-top: 20px; font-size: 17px; font-weight: 800; line-height: 1.5; letter-spacing: -.4px; overflow-wrap: anywhere; }
+    .task-topic { font-size: 10px; letter-spacing: .8px; font-weight: 700; color: var(--accent); text-transform: uppercase; overflow-wrap: anywhere; }
+    .task-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 24px; border-top: 1px solid #edf1ed; background: #fbfcfa; }
+    .task-card-footer .btn-primary { padding: 10px 14px; font-size: 11px; }
+    .status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .status-chip::before { content: ""; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+    .level-draft { background: #eff2f2; color: #53696e; }
+    .level-progress { background: #faf2df; color: #80601c; }
+    .level-ready { background: #e8f3eb; color: #2b7353; }
+    .level-priority { background: #fcf0dc; color: #9a5b1b; }
+    .match-panel { margin-top: 16px; border-radius: 10px; background: #eff6f1; padding: 12px; border: 1px solid #deeadf; }
+    .site-footer { max-width: 1232px; margin: 8px auto 0; border-top: 1px solid var(--line); padding: 24px 0 32px; display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 11px; }
+    .site-footer strong { color: var(--ink); font-weight: 700; }
+    .gauge-ring { transform: rotate(-90deg); transform-origin: 50% 50%; }
+    .gauge-progress { transition: stroke-dashoffset .4s ease; }
+    .mini-bar-fill { transition: width .4s ease; }
+    .score-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem; font-size: .8rem; }
+    .score-pip { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .field-label { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-bottom: .5rem; font-size: .8rem; font-weight: 700; color: #405a60; }
+    .badge-pts { border-radius: 5px; background: #edf4ee; color: var(--accent); font-size: .65rem; padding: 2px 6px; }
+    .min-hint { color: var(--muted); font-weight: 400; font-size: .65rem; margin-left: auto; }
+    .field-input { width: 100%; border-radius: 10px; border: 1px solid var(--line); background: #fafcf9; padding: 12px 14px; font-size: .85rem; color: var(--ink); line-height: 1.7; }
+    .field-input:focus { background: white; }
+    .field-input.ok { border-color: #6faa8b; }
+    .field-input.err { border-color: #d89a91; }
+    .field-counter { margin-top: .3rem; font-size: .65rem; color: var(--muted); text-align: right; }
+    .skeleton { background: linear-gradient(90deg,#f0f4f0 25%,#e5ece6 50%,#f0f4f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { pointer-events: auto; max-width: 380px; padding: 14px 18px; border-radius: 12px; font-size: 13px; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 30px #183c4220; animation: toastIn .2s ease; overflow-wrap: anywhere; }
+    .toast.success { background: #edf7ef; color: #246246; border: 1px solid #c4e3cf; }
+    .toast.error { background: #fff3f0; color: #913f36; border: 1px solid #f0c5ba; }
+    .toast.info { background: #eff7f7; color: #20595c; border: 1px solid #c5e1de; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
+    .modal-backdrop { background: #142f38a6; backdrop-filter: blur(5px); }
+    .modal-box { animation: toastIn .2s ease; max-height: calc(100dvh - 32px); overflow-y: auto; }
+    body.modal-open { overflow: hidden; }
+    .task-details { margin: 0 24px 22px; padding: 16px; background: #f4f8f3; border-radius: 12px; border: 1px solid var(--line); }
+    .task-details summary { cursor: pointer; color: var(--accent); font-size: 12px; font-weight: 700; }
+    .task-details dl { display: grid; gap: 14px; margin-top: 16px; }
+    .task-details dt { font-size: 11px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .task-details dd { font-size: 12px; line-height: 1.8; color: #576e70; white-space: pre-wrap; overflow-wrap: anywhere; }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-thumb { background: #becdc4; border-radius: 20px; }
+    @media (max-width: 1023px) {
+      .header-note { display: none; }
+      .hero-panel { gap: 25px; padding: 32px; }
+      .workflow { gap: 8px; padding: 18px; grid-template-columns: 1fr 12px 1fr 12px 1fr 12px 1fr; }
+      .workflow-item { gap: 8px; }
+      .workflow-item small { display: none; }
+      .catalog-filters { grid-template-columns: 1fr 1fr; }
+      .biz-task-heading { grid-template-columns: 1fr; gap: 12px; }
+      .biz-task-meta { justify-content: flex-start; }
+      .biz-task-meta .proposal-toggle, .biz-task-meta .proposal-empty { margin-left: auto; }
+      .site-footer { margin-left: 24px; margin-right: 24px; }
+    }
+    @media (max-width: 639px) {
+      .header-inner { flex-wrap: wrap; padding: 14px 16px; gap: 13px; }
+      .brand-mark { width: 34px; height: 34px; border-radius: 10px; }
+      .brand-name { font-size: 17px; }
+      .brand-subtitle { font-size: 8px; }
+      .tab-nav { width: 100%; }
+      .tab-nav .tab-btn { flex: 1; }
+      .tab-btn { padding: 0 10px; min-height: 36px; font-size: 11px; gap: 5px; }
+      .tab-btn svg { width: 14px; height: 14px; }
+      .workspace-line { font-size: 11px; }
+      [id] { scroll-margin-top: 140px; }
+      .workspace-tag { display: none; }
+      .hero-panel { display: block; padding: 28px 24px; border-radius: 18px; }
+      .hero-title { font-size: 29px; letter-spacing: -1px; }
+      .hero-description { font-size: 12px; }
+      .brief-preview { display: none; }
+      .hero-tags { font-size: 10px; gap: 10px; }
+      .workflow { padding: 16px 10px; gap: 4px; grid-template-columns: 1fr 10px 1fr 10px 1fr 10px 1fr; }
+      .workflow-item { flex-direction: column; gap: 7px; text-align: center; }
+      .workflow-item p { font-size: 9px; }
+      .step-dot { width: 28px; height: 28px; flex-basis: 28px; }
+      .section-heading h2 { font-size: 16px; }
+      .draft-area { min-height: 190px; padding: 14px; font-size: 13px; }
+      .draft-footer > div { width: 100%; }
+      .draft-footer .btn-primary { width: 100%; }
+      .catalog-filters { grid-template-columns: 1fr; padding: 18px; }
+      .filter-actions .btn-primary { flex: 1; }
+      .catalog-caption { align-items: flex-start; flex-wrap: wrap; }
+      .biz-task-heading { padding: 17px; }
+      .biz-task-meta { gap: 8px; }
+      .proposal-toggle, .proposal-empty { min-width: 0; font-size: 10px; }
+      .status-chip { font-size: 9px; }
+      .task-card-body { padding: 20px; }
+      .task-card-footer { padding: 14px 20px; }
+      .site-footer { margin: 0 16px; flex-direction: column; gap: 6px; font-size: 10px; }
+      #toast-container { left: 16px; right: 16px; bottom: 16px; }
+      .toast { max-width: none; }
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
-
-    /* ── Inputs ── */
-    input, textarea, select {
-      transition: border-color .15s, box-shadow .15s;
-    }
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px #6366f120;
-    }
-
-    /* ── Skeleton ── */
-    .skeleton { background: linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);
-      background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    /* ── Toast ── */
-    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100; display: flex; flex-direction: column; gap: .5rem; pointer-events: none; }
-    .toast { pointer-events: auto; min-width: 260px; max-width: 360px; border-radius: 14px; padding: .75rem 1rem; font-size: .875rem; font-weight: 500;
-      display: flex; align-items: center; gap: .6rem;
-      animation: toastIn .3s cubic-bezier(.34,1.56,.64,1); box-shadow: 0 8px 32px #00000022; }
-    .toast.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-    .toast.error   { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
-    .toast.info    { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-    @keyframes toastIn { from{opacity:0;transform:translateY(12px) scale(.95)} to{opacity:1;transform:none} }
-    @keyframes toastOut { to{opacity:0;transform:translateY(8px) scale(.95)} }
-
-    /* ── Modal ── */
-    .modal-backdrop { background: rgba(15,23,42,.6); backdrop-filter: blur(4px); }
-    .modal-box { animation: modalIn .25s cubic-bezier(.34,1.56,.64,1); }
-    @keyframes modalIn { from{opacity:0;transform:translateY(20px) scale(.96)} to{opacity:1;transform:none} }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-
-    /* ── Mini rating bar ── */
-    .mini-bar-fill { transition: width .5s cubic-bezier(.4,0,.2,1); }
-
-    /* ── Field row in breakdown ── */
-    .score-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem; font-size: .8rem; }
-    .score-pip { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   </style>
 </head>
 <body class="min-h-screen antialiased">
@@ -163,118 +238,82 @@
 <div id="toast-container" aria-live="polite"></div>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header class="sticky top-0 z-40 border-b border-white/40 bg-white/80 backdrop-blur-xl shadow-sm">
-  <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-    <!-- Logo -->
-    <a href="#" class="flex items-center gap-3" aria-label="AI Sana Challenge Hub">
-      <div class="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/30">
-        <span class="text-base font-black text-white">S</span>
-      </div>
-      <div class="hidden sm:block">
-        <div class="text-sm font-bold text-slate-900 leading-none">AI Sana <span class="text-indigo-600">/</span> Challenge Hub</div>
-        <div class="mt-0.5 text-xs text-slate-400">от бизнес-задачи к решению</div>
-      </div>
+<a class="skip-link" href="#main-content">Перейти к содержимому</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand" aria-label="Точка Сборки — главная">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none"><path d="M4 9V4h5m6 0h5v5M4 15v5h5m6 0h5v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      </span>
+      <span><span class="brand-name">Точка Сборки<span style="color:var(--accent)">.</span></span><span class="brand-subtitle block">От идеи к решению</span></span>
     </a>
-
-    <!-- Tabs -->
-    <nav class="flex rounded-xl bg-slate-100 p-1 gap-1" aria-label="Навигация">
-      <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-tab="business" aria-selected="true">
-        <span class="hidden sm:inline">🏢 </span>Бизнес
+    <p class="header-note">Задачи бизнеса. Идеи нового поколения.</p>
+    <nav class="tab-nav" role="tablist" aria-label="Рабочее пространство">
+      <button id="business-tab" type="button" class="tab-btn" role="tab" data-tab="business" aria-selected="true" aria-controls="business-panel">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V4h6v3M4 12h16M10 12v3h4v-3"/></svg>Бизнес
       </button>
-      <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-tab="student" aria-selected="false">
-        <span class="hidden sm:inline">🎓 </span>Каталог
+      <button id="student-tab" type="button" class="tab-btn" role="tab" data-tab="student" aria-selected="false" aria-controls="student-panel" tabindex="-1">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 9 9-5 9 5-9 5-9-5Zm4 3v5c3 3 7 3 10 0v-5M21 9v8"/></svg>Каталог
       </button>
     </nav>
   </div>
 </header>
 
 <!-- ═══════════════════ MAIN ═══════════════════ -->
-<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
+<main id="main-content" class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8" tabindex="-1">
 
   <!-- ╔══════ BUSINESS PANEL ══════╗ -->
-  <section id="business-panel" class="space-y-8">
+  <section id="business-panel" class="space-y-6" role="tabpanel" aria-labelledby="business-tab">
 
-    <!-- Hero -->
-    <div class="hero-panel relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 p-8 text-white shadow-2xl shadow-indigo-500/20 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
-      <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5"></div>
-      <div class="absolute -bottom-10 right-24 h-40 w-40 rounded-full bg-white/5"></div>
-      <div class="relative z-10 min-w-0 flex-1">
-        <p class="text-sm font-semibold uppercase tracking-[.18em] text-indigo-200">Кабинет бизнеса</p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Опишите потребность<br>или проблему бизнеса</h1>
-        <p class="mt-3 max-w-xl text-indigo-200">AI уточнит вводные, соберёт карточку и рассчитает рейтинг готовности. Студенческие команды сами выберут задачу и предложат решение.</p>
-        <!-- Progress steps -->
-        <div class="mt-8 flex items-center gap-0">
-        <div id="step-1-wrap" class="flex items-center gap-2">
-          <div id="step-1-dot" class="step-dot active h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
-          <span class="hidden sm:block text-sm font-medium text-indigo-100">Черновик</span>
-        </div>
-        <div id="step-line-1" class="step-line h-0.5 w-8 bg-white/20 mx-2 sm:w-16"></div>
-        <div id="step-2-wrap" class="flex items-center gap-2">
-          <div id="step-2-dot" class="step-dot idle h-8 w-8 rounded-full flex items-center justify-center text-slate-400 text-xs font-bold">2</div>
-          <span class="hidden sm:block text-sm font-medium text-indigo-300">Уточнение</span>
-        </div>
-        <div id="step-line-2" class="step-line h-0.5 w-8 bg-white/20 mx-2 sm:w-16"></div>
-        <div id="step-3-wrap" class="flex items-center gap-2">
-          <div id="step-3-dot" class="step-dot idle h-8 w-8 rounded-full flex items-center justify-center text-slate-400 text-xs font-bold">3</div>
-          <span class="hidden sm:block text-sm font-medium text-indigo-300">Карточка</span>
-        </div>
-        <div id="step-line-3" class="step-line h-0.5 w-8 bg-white/20 mx-2 sm:w-16"></div>
-        <div id="step-4-wrap" class="flex items-center gap-2">
-          <div id="step-4-dot" class="step-dot idle h-8 w-8 rounded-full flex items-center justify-center text-slate-400 text-xs font-bold">4</div>
-          <span class="hidden sm:block text-sm font-medium text-indigo-300">Опубликовано</span>
-        </div>
+    <div class="workspace-line"><p>Рабочее пространство<span class="divider">/</span><strong>Бизнес</strong></p><span class="workspace-tag">От потребности к прототипу</span></div>
+    <div class="hero-panel">
+      <div>
+        <p class="eyebrow">Бизнес × студенческие команды</p>
+        <h1 class="hero-title">Превратите идею<br>в <em>понятную задачу.</em></h1>
+        <p class="hero-description">Опишите, что нужно вашему бизнесу. AI поможет уточнить детали, а студенческие команды предложат свои решения.</p>
+        <div class="hero-tags"><span>3 уточняющих вопроса</span><span>7 полей карточки</span><span>Прозрачный рейтинг</span></div>
       </div>
-      </div>
-      <aside class="hero-sidecard relative z-10 hidden p-5 lg:block" aria-label="Этапы создания задачи">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-[.14em] text-indigo-100">Путь задачи</span>
-          <span class="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/90">3 этапа</span>
-        </div>
-        <div class="mt-5 space-y-4">
-          <div class="flex items-center gap-3"><span class="hero-step-number">01</span><div><p class="text-sm font-semibold text-white">Опишите идею</p><p class="mt-0.5 text-xs text-indigo-100/75">Свободным текстом</p></div></div>
-          <div class="flex items-center gap-3"><span class="hero-step-number">02</span><div><p class="text-sm font-semibold text-white">Уточните детали</p><p class="mt-0.5 text-xs text-indigo-100/75">AI подскажет, чего не хватает</p></div></div>
-          <div class="flex items-center gap-3"><span class="hero-step-number">03</span><div><p class="text-sm font-semibold text-white">Получите отклики</p><p class="mt-0.5 text-xs text-indigo-100/75">Команды увидят задачу в каталоге</p></div></div>
-        </div>
+      <aside class="brief-preview" aria-label="Что получится после уточнения задачи">
+        <div class="preview-top"><span>Из идеи — в бриф</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3H5v18h14V3h-3M8 3v4h8V3H8Zm0 9h8m-8 4h5"/></svg></div>
+        <h2>Хорошая задача начинается<br>с ясных вводных</h2>
+        <ul><li>Данные и материалы для старта</li><li>Конкретный ожидаемый результат</li><li>Измеримые критерии успеха</li></ul>
+        <div class="preview-bottom"><span>Следующий шаг</span><strong>Решение вашей команды ↗</strong></div>
       </aside>
     </div>
+    <div class="workflow" aria-label="Этапы создания задачи"><div id="step-1-wrap" class="workflow-item"><div id="step-1-dot" class="step-dot idle">1</div><div><p>Черновик</p><small>Опишите потребность</small></div></div><div id="step-line-1" class="step-line" aria-hidden="true"></div><div id="step-2-wrap" class="workflow-item"><div id="step-2-dot" class="step-dot idle">2</div><div><p>Уточнения</p><small>Ответьте на вопросы</small></div></div><div id="step-line-2" class="step-line" aria-hidden="true"></div><div id="step-3-wrap" class="workflow-item"><div id="step-3-dot" class="step-dot idle">3</div><div><p>Карточка</p><small>Проверьте детали</small></div></div><div id="step-line-3" class="step-line" aria-hidden="true"></div><div id="step-4-wrap" class="workflow-item"><div id="step-4-dot" class="step-dot idle">4</div><div><p>Публикация</p><small>Получите отклики</small></div></div></div>
 
     <!-- Step 1: Draft -->
-    <div id="step1-card" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <div class="flex items-center gap-3 mb-5">
-        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50">
-          <svg class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    <div id="step1-card" class="surface p-6 sm:p-8">
+      <div class="section-heading">
+        <div class="flex items-center gap-3">
+          <div class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5H5v14h14v-7M15 4l5 5M9 15l3-1 9-9-3-3-9 9-1 4Z" stroke-linejoin="round"/></svg></div>
+          <div><h2><label for="draft-text">С какой задачей поможем?</label></h2><p>Начните с нескольких предложений. Структуру соберём вместе.</p></div>
         </div>
-        <div>
-          <h2 class="font-bold text-slate-900">Шаг 1 — Черновик задачи</h2>
-          <p class="text-sm text-slate-400">Опишите проблему, потребность или идею своими словами</p>
-        </div>
+        <span class="hidden sm:block text-xs text-slate-500">01 / 04</span>
       </div>
-      <textarea id="draft-text" rows="5"
-        class="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm leading-7 text-slate-700 placeholder:text-slate-400 focus:bg-white"
-        placeholder="Например: «Хотим сократить время обработки заявок клиентов с 3 дней до 4 часов. Текущий процесс ручной и непрозрачный, теряем около 20% заявок из-за человеческих ошибок…»"></textarea>
-      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <button id="analyze-btn"
-          class="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:shadow-indigo-500/30 hover:brightness-110 disabled:cursor-wait disabled:opacity-60">
-          <svg class="h-4 w-4 transition group-hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-          Анализировать через AI
+      <textarea id="draft-text" rows="4" class="draft-area" aria-describedby="draft-hint" placeholder="Например: хотим сократить время доставки заказов. Сейчас логист составляет маршруты вручную, и курьеры часто опаздывают. Есть история доставок за полгода…"></textarea>
+      <div class="draft-footer">
+        <div><p id="draft-hint" class="draft-hint">Опишите проблему, доступные данные и желаемый результат.</p><p id="analyze-msg" class="mt-1 text-xs text-teal-700" aria-live="polite"></p></div>
+        <button id="analyze-btn" class="btn-primary">
+          <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3L12 3Z" stroke-linejoin="round"/></svg>
+          Анализировать через AI <span aria-hidden="true">↗</span>
         </button>
-        <p id="analyze-msg" class="text-sm text-slate-400" aria-live="polite"></p>
       </div>
     </div>
 
     <!-- Step 2: Questions -->
-    <div id="questions-section" class="hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-6 sm:p-8">
+    <div id="questions-section" class="hidden rounded-3xl border border-teal-100 bg-gradient-to-br from-teal-50 to-teal-50 p-6 sm:p-8">
       <div class="flex items-center gap-3 mb-6">
-        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100">
-          <svg class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-100">
+          <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
           <h2 class="font-bold text-slate-900">Шаг 2 — Уточняющие вопросы</h2>
-          <p id="topic-line" class="text-sm text-slate-500"></p>
+          <p id="topic-line" class="text-sm text-slate-600"></p>
         </div>
       </div>
       <div id="questions-list" class="grid gap-4"></div>
-      <button id="assemble-btn" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
+      <button id="assemble-btn" class="btn-primary mt-6">
         Собрать карточку
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
       </button>
@@ -284,11 +323,11 @@
     <div id="editor-section" class="hidden">
       <div class="flex items-center gap-3 mb-6">
         <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50">
-          <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+          <svg class="h-5 w-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
         </div>
         <div>
           <h2 class="font-bold text-slate-900">Шаг 3 — Проверьте и дополните карточку</h2>
-          <p class="text-sm text-slate-400">Отредактируйте поля и подтвердите публикацию</p>
+          <p class="text-sm text-slate-500">Отредактируйте поля и подтвердите публикацию</p>
         </div>
       </div>
 
@@ -386,7 +425,7 @@
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
                 <span id="rating-value" class="text-4xl font-black text-slate-900 tabular-nums">0</span>
-                <span class="text-xs text-slate-400 font-medium">/100 баллов</span>
+                <span class="text-xs text-slate-500 font-medium">/100 баллов</span>
               </div>
             </div>
           </div>
@@ -396,16 +435,16 @@
           </div>
           <!-- Score breakdown -->
           <div class="mt-5 border-t border-slate-100 pt-4 space-y-2.5">
-            <h3 class="text-xs font-bold uppercase tracking-wide text-slate-400">Начисленные баллы</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wide text-slate-500">Начисленные баллы</h3>
             <div id="score-breakdown" class="space-y-2"></div>
           </div>
           <!-- Missing fields -->
           <div id="missing-wrap" class="mt-4 border-t border-slate-100 pt-4">
-            <h3 class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Что повысит рейтинг</h3>
+            <h3 class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Что повысит рейтинг</h3>
             <ul id="missing-fields" class="space-y-1.5 text-sm"></ul>
           </div>
           <!-- Publish -->
-          <button id="publish-btn" class="mt-5 w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/20 transition hover:bg-emerald-600 active:scale-[.98]">
+          <button id="publish-btn" class="btn-primary mt-5 w-full">
             Опубликовать в каталог
           </button>
         </aside>
@@ -413,77 +452,65 @@
     </div>
 
     <!-- Business Inbox -->
-    <div class="space-y-4">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[.14em] text-slate-400">Бизнес-кабинет</p>
-          <h2 class="mt-0.5 text-lg font-semibold text-slate-700">Входящие отклики</h2>
-        </div>
-        <button id="reload-biz-tasks" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm hover:bg-slate-50 active:scale-[.98]">
-          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-          Обновить
+    <section aria-labelledby="inbox-title">
+      <div class="inbox-header">
+        <div><h2 id="inbox-title">Опубликованные задачи <span id="biz-task-count" class="count-badge">…</span></h2><p>Откройте отклики, чтобы познакомиться с предложениями команд.</p></div>
+        <button id="reload-biz-tasks" type="button" class="btn-secondary" aria-label="Обновить задачи и отклики">
+          <svg aria-hidden="true" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M20 7v5h-5M4 17v-5h5M5 7a8 8 0 0 1 14-1l1 6M4 12l1 6a8 8 0 0 0 14-1" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hidden sm:inline">Обновить</span>
         </button>
       </div>
-      <div id="biz-tasks-list" class="space-y-4"></div>
-      <div id="empty-biz-tasks" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white py-12 text-center">
-        <div class="text-4xl">📭</div>
-        <p class="mt-3 font-semibold text-slate-600">Нет опубликованных задач</p>
-        <p class="mt-1 text-sm text-slate-400">Опубликуйте первую задачу — команды увидят её и откликнутся</p>
+      <div id="biz-tasks-list"></div>
+      <div id="empty-biz-tasks" class="hidden surface py-12 px-6 text-center">
+        <p class="font-semibold text-slate-700">Здесь появятся опубликованные задачи</p>
+        <p class="mt-2 text-sm text-slate-500">Создайте первую карточку — команды смогут предложить решение.</p>
       </div>
-    </div>
+    </section>
   </section>
   <!-- ╚══════ /BUSINESS PANEL ══════╝ -->
 
   <!-- ╔══════ STUDENT PANEL ══════╗ -->
-  <section id="student-panel" class="hidden space-y-7">
-    <!-- Hero -->
-    <div class="hero-panel relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 p-8 text-white shadow-2xl shadow-violet-500/20 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
-      <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5"></div>
-      <div class="relative z-10 min-w-0 flex-1">
-        <p class="text-sm font-semibold uppercase tracking-[.18em] text-violet-200">Каталог студента</p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Найдите задачу для команды</h1>
-        <p class="mt-3 max-w-xl text-violet-200">Изучите задачи бизнеса, выберите интересную и предложите своё решение. Команды выбирают сами — никаких назначений.</p>
+  <section id="student-panel" class="hidden space-y-6" role="tabpanel" aria-labelledby="student-tab">
+    <div class="workspace-line"><p>Рабочее пространство<span class="divider">/</span><strong>Каталог студента</strong></p><span class="workspace-tag">Практика на реальных задачах</span></div>
+    <div class="hero-panel">
+      <div>
+        <p class="eyebrow">От навыков — к практике</p>
+        <h1 class="hero-title">Ваша команда.<br><em>Следующий вызов.</em></h1>
+        <p class="hero-description">Находите задачи бизнеса, в которых пригодятся ваши навыки. Выбирайте направление и предлагайте своё решение.</p>
+        <div class="hero-tags"><span>Подбор по навыкам</span><span>Открытые вводные</span><span>Выбор за командой</span></div>
       </div>
-      <aside class="hero-sidecard relative z-10 hidden p-5 lg:block" aria-label="Подбор задач с учётом команды">
-        <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-violet-100">
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591L15 12.75V18a.75.75 0 01-.75.75H9.75A.75.75 0 019 18v-5.25L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
-          Умный подбор
-        </div>
-        <p class="mt-3 text-sm leading-5 text-white/90">Покажем, где опыт команды может пригодиться</p>
-        <div class="mt-4 space-y-2.5">
-          <div class="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2"><span class="text-xs text-violet-100">Навыки команды</span><span class="text-xs font-semibold text-white">↔ задача</span></div>
-          <div class="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2"><span class="text-xs text-violet-100">Направление команды</span><span class="text-xs font-semibold text-white">↔ тема</span></div>
-        </div>
-        <p class="mt-3 text-[11px] leading-4 text-violet-100/70">Подбор помогает сориентироваться — решение за командой.</p>
+      <aside class="brief-preview" aria-label="Как выбрать задачу">
+        <div class="preview-top"><span>Найдите свою задачу</span><span aria-hidden="true">↗</span></div>
+        <h2>Совпадение начинается<br>с ваших сильных сторон</h2>
+        <ul><li>Выберите команду в фильтре</li><li>Посмотрите совпадения навыков</li><li>Отправьте идею решения</li></ul>
+        <div class="preview-bottom"><span>Рейтинг карточки</span><strong>Полнота вводных / 100</strong></div>
       </aside>
     </div>
 
-    <!-- Filters -->
-    <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div class="flex flex-col gap-1">
-        <label for="team-match-select" class="text-xs font-semibold text-slate-500">Подбор задач для команды</label>
-        <select id="team-match-select" class="min-w-[220px] rounded-xl border border-slate-200 bg-indigo-50 px-3.5 py-2.5 text-sm font-medium text-indigo-900 focus:bg-white">
-          <option value="">Без учёта команды</option>
+    <div class="catalog-filters surface">
+      <div class="filter-field">
+        <label for="team-match-select">Ваша команда</label>
+        <select id="team-match-select"><option value="">Без учёта команды</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="filter-topic">Отрасль задачи</label>
+        <input id="filter-topic" type="search" placeholder="Например, логистика">
+      </div>
+      <div class="filter-field">
+        <label for="filter-level">Готовность карточки</label>
+        <select id="filter-level">
+          <option value="">Все уровни</option>
+          <option value="PRIORITY">Приоритетная · 90–100</option>
+          <option value="READY">Готовая · 70–89</option>
+          <option value="IN_PROGRESS">В работе · 40–69</option>
+          <option value="DRAFT">Черновик · 0–39</option>
         </select>
       </div>
-      <svg class="h-4 w-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591L15 12.75V18a.75.75 0 01-.75.75H9.75A.75.75 0 019 18v-5.25L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
-      <input id="filter-topic" type="search" placeholder="Тема или ключевое слово…"
-        class="flex-1 min-w-[160px] rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:bg-white">
-      <select id="filter-level" class="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700 focus:bg-white">
-        <option value="">Все уровни</option>
-        <option value="PRIORITY">🔥 Приоритетная (90–100)</option>
-        <option value="READY">✅ Готовая (70–89)</option>
-        <option value="IN_PROGRESS">🔄 Рабочая (40–69)</option>
-        <option value="DRAFT">📋 Черновик (0–39)</option>
-      </select>
-      <button id="apply-filters" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Найти</button>
-      <button id="clear-filters" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Сбросить</button>
-      <button id="reload-tasks" class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
-        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-        Обновить
-      </button>
+      <div class="filter-actions"><button id="apply-filters" class="btn-primary">Найти</button><button id="clear-filters" class="text-button">Сбросить</button></div>
     </div>
-
+    <div class="catalog-caption">
+      <div><span id="catalog-result-count" role="status">Загружаем задачи…</span><span id="catalog-sort-label" class="ml-3">Сначала самые готовые</span></div>
+      <button id="reload-tasks" class="text-button">Обновить каталог ↻</button>
+    </div>
     <!-- Catalog grid -->
     <div id="tasks-grid" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
 
@@ -491,12 +518,13 @@
     <div id="empty-catalog" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white py-16 text-center">
       <div class="text-5xl">🧭</div>
       <h2 class="mt-4 text-lg font-bold text-slate-700">Задач по запросу не найдено</h2>
-      <p class="mt-2 text-sm text-slate-400">Попробуйте изменить фильтры или сбросить поиск</p>
-      <button onclick="document.getElementById('clear-filters').click()" class="mt-4 rounded-xl bg-indigo-50 px-5 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100">Показать все задачи</button>
+      <p class="mt-2 text-sm text-slate-500">Попробуйте изменить фильтры или сбросить поиск</p>
+      <button onclick="document.getElementById('clear-filters').click()" class="mt-4 rounded-xl bg-teal-50 px-5 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-100">Показать все задачи</button>
     </div>
   </section>
   <!-- ╚══════ /STUDENT PANEL ══════╝ -->
 </main>
+<footer class="site-footer"><p><strong>Точка Сборки</strong> · Пространство для совместных решений</p><p>Бизнес задаёт направление. Команды создают результат.</p></footer>
 
 <!-- ═══════════════════ PROPOSAL MODAL ═══════════════════ -->
 <div id="proposal-modal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto p-4"
@@ -504,11 +532,11 @@
   <div class="modal-box my-auto w-full max-w-lg rounded-3xl bg-white shadow-2xl">
     <div class="border-b border-slate-100 px-6 pt-6 pb-5 flex items-start justify-between gap-4">
       <div>
-        <p class="text-xs font-bold uppercase tracking-[.14em] text-indigo-600">Предложение команды</p>
+        <p class="text-xs font-bold uppercase tracking-[.14em] text-teal-600">Предложение команды</p>
         <h2 id="proposal-heading" class="mt-1 text-xl font-bold text-slate-900">Подать предложение</h2>
         <p id="proposal-task-title" class="mt-1 text-sm text-slate-500 line-clamp-1"></p>
       </div>
-      <button id="close-modal" class="grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition" aria-label="Закрыть">
+      <button id="close-modal" class="grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition" aria-label="Закрыть">
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
@@ -522,62 +550,33 @@
       <div>
         <label for="proposal-idea" class="mb-1.5 block text-sm font-semibold text-slate-700">Идея решения <span class="text-rose-400">*</span></label>
         <textarea id="proposal-idea" required rows="4"
-          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:bg-white"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-700 placeholder:text-slate-500 focus:bg-white"
           placeholder="Кратко опишите ваш подход: технологии, архитектуру, ключевую идею…"></textarea>
       </div>
       <div>
         <label for="proposal-link" class="mb-1.5 block text-sm font-semibold text-slate-700">
-          Ссылка на прототип <span class="text-slate-400 font-normal">(если есть)</span>
+          Ссылка на прототип <span class="text-slate-500 font-normal">(если есть)</span>
         </label>
-        <input id="proposal-link" type="url" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:bg-white" placeholder="https://…">
+        <input id="proposal-link" type="url" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-700 placeholder:text-slate-500 focus:bg-white" placeholder="https://…">
       </div>
       <div class="flex justify-end gap-3 pt-1">
         <button type="button" id="cancel-modal" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Отмена</button>
-        <button type="submit" class="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:brightness-110">Отправить предложение</button>
+        <button type="submit" class="btn-primary">Отправить предложение</button>
       </div>
     </form>
-  <!-- ═══════════════════ PROPOSAL PREVIEW MODAL ═══════════════════ -->
-  <div id="preview-modal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto p-4"
-    role="dialog" aria-modal="true" aria-labelledby="preview-heading">
-    <div class="modal-box my-auto w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden">
-      <div class="border-b border-slate-100 bg-slate-50/70 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🚀</span>
-          <h3 id="preview-heading" class="font-bold text-slate-900">Материалы решения команды</h3>
-        </div>
-        <button id="close-preview-modal" class="grid h-8 w-8 place-items-center rounded-xl text-slate-400 hover:bg-slate-200/60 text-lg">×</button>
-      </div>
-      <div class="p-6 space-y-4">
-        <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Команда</span>
-          <p id="preview-team" class="font-bold text-slate-900 text-base"></p>
-        </div>
-        <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Идея и план</span>
-          <p id="preview-idea" class="mt-1 text-sm text-slate-600 bg-slate-50 p-3 rounded-xl whitespace-pre-wrap leading-relaxed border border-slate-100"></p>
-        </div>
-        <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ссылка на прототип / репозиторий</span>
-          <div id="preview-link-box" class="mt-1"></div>
-        </div>
-      </div>
-      <div class="border-t border-slate-100 px-6 py-3.5 bg-slate-50/50 flex justify-end">
-        <button id="close-preview-btn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Закрыть</button>
-      </div>
-    </div>
   </div>
-
-<!-- ═══════════════════ GLOBAL STYLES (via Tailwind arbitrary) ═══════════════════ -->
-<style>
-  .field-label { display:flex; align-items:center; gap:.4rem; margin-bottom:.4rem; font-size:.8125rem; font-weight:600; color:#475569; }
-  .badge-pts { display:inline-flex; align-items:center; border-radius:6px; background:#ede9fe; color:#6d28d9; font-size:.7rem; font-weight:700; padding:1px 6px; }
-  .min-hint { color:#94a3b8; font-weight:400; font-size:.75rem; margin-left:auto; }
-  .field-input { width:100%; border-radius:12px; border:1px solid #e2e8f0; background:#f8fafc; padding:.625rem .875rem; font-size:.875rem; color:#1e293b; line-height:1.6; transition:border-color .15s,box-shadow .15s,background .15s; }
-  .field-input:focus { background:#fff; border-color:#6366f1; box-shadow:0 0 0 3px #6366f120; outline:none; }
-  .field-input.ok  { border-color:#10b981; }
-  .field-input.err { border-color:#f87171; }
-  .field-counter { margin-top:.25rem; font-size:.7rem; color:#94a3b8; text-align:right; }
-</style>
+</div>
+<!-- Task details -->
+<div id="task-modal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="task-detail-title">
+  <div class="modal-box w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+    <div class="flex items-start justify-between gap-4 p-6">
+      <div><p id="task-detail-topic" class="task-topic"></p><h2 id="task-detail-title" class="mt-2 text-xl font-bold text-slate-800"></h2><span id="task-detail-level" class="status-chip mt-3"></span></div>
+      <button type="button" id="close-task-modal" class="btn-secondary" aria-label="Закрыть описание задачи">✕</button>
+    </div>
+    <div class="task-details"><dl id="task-detail-fields"></dl></div>
+    <div class="flex justify-end border-t border-slate-100 p-5"><button type="button" id="detail-propose-btn" class="btn-primary">Подать предложение ↗</button></div>
+  </div>
+</div>
 
 <script>
 // ── Constants ──────────────────────────────────────────────────────────
@@ -593,10 +592,10 @@ const FIELD_LABELS = {
 const FIELD_PTS  = { context_and_need:20, data_and_materials:20, expected_result:15, success_criteria:15, constraints:10, target_users:10, contact_and_feedback:10 };
 const FIELD_MIN  = { context_and_need:40, data_and_materials:20, expected_result:25, success_criteria:20, constraints:15, target_users:10 };
 const LEVEL_META = {
-  DRAFT:       { label:'📋 Черновик',      hint:'0–39 баллов',   bar:'bg-slate-400',   badge:'bg-slate-100 text-slate-600',     stroke:'#94a3b8' },
-  IN_PROGRESS: { label:'🔄 Рабочая',       hint:'40–69 баллов',  bar:'bg-amber-400',   badge:'bg-amber-100 text-amber-700',     stroke:'#f59e0b' },
-  READY:       { label:'✅ Готовая',        hint:'70–89 баллов',  bar:'bg-emerald-500', badge:'bg-emerald-100 text-emerald-700', stroke:'#10b981' },
-  PRIORITY:    { label:'🔥 Приоритетная',  hint:'90–100 баллов', bar:'bg-orange-500',  badge:'bg-orange-100 text-orange-700',   stroke:'#f97316' }
+  DRAFT:       { label:'Черновик',     hint:'0–39 баллов',   bar:'bg-slate-400',   badge:'level-draft',    stroke:'#84969c' },
+  IN_PROGRESS: { label:'В работе',     hint:'40–69 баллов',  bar:'bg-amber-400',   badge:'level-progress', stroke:'#c69e4b' },
+  READY:       { label:'Готовая',      hint:'70–89 баллов',  bar:'bg-emerald-500', badge:'level-ready',    stroke:'#398968' },
+  PRIORITY:    { label:'Приоритетная', hint:'90–100 баллов', bar:'bg-orange-400',  badge:'level-priority', stroke:'#bd8438' }
 };
 
 let analyzedQuestions = [];
@@ -610,7 +609,12 @@ function toast(msg, type = 'info', duration = 3500) {
   const icons = { success:'✓', error:'✕', info:'ℹ' };
   const el = document.createElement('div');
   el.className = `toast ${type}`;
-  el.innerHTML = `<span style="font-size:1rem">${icons[type]}</span><span>${msg}</span>`;
+  const icon = document.createElement('span');
+  icon.textContent = icons[type] || icons.info;
+  icon.setAttribute('aria-hidden', 'true');
+  const message = document.createElement('span');
+  message.textContent = msg;
+  el.append(icon, message);
   document.getElementById('toast-container').append(el);
   setTimeout(() => {
     el.style.animation = 'toastOut .25s forwards';
@@ -621,12 +625,26 @@ function toast(msg, type = 'info', duration = 3500) {
 // ── Tabs ───────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.setAttribute('aria-selected', String(b === btn));
+      b.tabIndex = b === btn ? 0 : -1;
+    });
     document.getElementById('business-panel').classList.toggle('hidden', btn.dataset.tab !== 'business');
     document.getElementById('student-panel').classList.toggle('hidden', btn.dataset.tab !== 'student');
     if (btn.dataset.tab === 'student')  loadCatalog();
     if (btn.dataset.tab === 'business') loadBizTasks();
   });
+});
+
+document.querySelector('.tab-nav').addEventListener('keydown', e => {
+  const tabs = [...document.querySelectorAll('.tab-btn')];
+  const current = tabs.indexOf(document.activeElement);
+  if (current < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const index = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 :
+    (current + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+  tabs[index].focus();
+  tabs[index].click();
 });
 
 // ── Step indicator ─────────────────────────────────────────────────────
@@ -635,6 +653,9 @@ function setStep(n) {
     const dot  = document.getElementById(`step-${i}-dot`);
     const line = document.getElementById(`step-line-${i}`);
     if (!dot) continue;
+    const step = document.getElementById('step-' + i + '-wrap');
+    if (i === n) step.setAttribute('aria-current', 'step');
+    else step.removeAttribute('aria-current');
     dot.classList.remove('done','active','idle');
     dot.style.color = '';
     if (i < n) {
@@ -642,10 +663,10 @@ function setStep(n) {
       if (line) line.style.background = '#10b981';
     } else if (i === n) {
       dot.classList.add('active'); dot.textContent = i; dot.style.color = '#fff';
-      if (line) line.style.background = 'rgba(255,255,255,.2)';
+      if (line) line.style.background = '#dee7e4';
     } else {
       dot.classList.add('idle'); dot.textContent = i; dot.style.color = '#94a3b8';
-      if (line) line.style.background = 'rgba(255,255,255,.2)';
+      if (line) line.style.background = '#dee7e4';
     }
   }
 }
@@ -684,13 +705,13 @@ function renderQuestions(result) {
   document.getElementById('topic-line').textContent = 'Определённая отрасль: ' + (result.topic || 'не определена');
   result.questions.forEach((q, i) => {
     const wrap = document.createElement('div');
-    wrap.className = 'rounded-2xl bg-white border border-indigo-100 p-4 shadow-sm';
+    wrap.className = 'rounded-2xl bg-white border border-teal-100 p-4 shadow-sm';
     const label = document.createElement('label'); label.className = 'block';
     const num = document.createElement('span');
     num.className = 'mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800';
-    num.innerHTML = `<span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white text-xs font-bold">${i+1}</span> ${q.text || q.question || ('Вопрос ' + (i+1))}`;
+    num.innerHTML = `<span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-600 text-white text-xs font-bold">${i+1}</span> ${esc(q.text || q.question || ('Вопрос ' + (i+1)))}`;
     const answer = document.createElement('textarea');
-    answer.className = 'answer-input mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700 focus:bg-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100';
+    answer.className = 'answer-input mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700 focus:bg-white focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100';
     answer.rows = 2; answer.dataset.index = i; answer.placeholder = 'Ответ бизнеса…';
     label.append(num, answer); wrap.append(label); list.append(wrap);
   });
@@ -741,9 +762,15 @@ function updateCounters(el) {
 }
 
 let ratingTimer;
-function scheduleRating() { clearTimeout(ratingTimer); ratingTimer = setTimeout(updateRating, 160); }
+let ratingVersion = 0;
+function scheduleRating() {
+  ratingVersion++;
+  clearTimeout(ratingTimer);
+  ratingTimer = setTimeout(updateRating, 160);
+}
 
 async function updateRating() {
+  const version = ++ratingVersion;
   const fields = Object.fromEntries([...document.querySelectorAll('[data-field]')].map(el => [el.id, el.value]));
   // local instant calc
   let { score, level, missing } = localCalc(fields);
@@ -754,7 +781,7 @@ async function updateRating() {
     });
     if (resp.ok) {
       const r = await resp.json();
-      paintRating(r.rating, r.readiness_level, r.empty_fields || missing, fields);
+      if (version === ratingVersion) paintRating(r.rating, r.readiness_level, r.empty_fields || missing, fields);
     }
   } catch(_) {}
 }
@@ -780,7 +807,7 @@ function paintRating(score, level, missing, fields) {
   // Value + badge
   document.getElementById('rating-value').textContent = score;
   const badge = document.getElementById('rating-badge');
-  badge.className = 'inline-flex rounded-full px-3 py-1 text-xs font-bold ' + meta.badge;
+  badge.className = 'status-chip ' + meta.badge;
   badge.textContent = meta.label + ' · ' + meta.hint;
   // Breakdown
   const bd = document.getElementById('score-breakdown');
@@ -793,7 +820,7 @@ function paintRating(score, level, missing, fields) {
     const pip  = document.createElement('span'); pip.className = 'score-pip flex-shrink-0 ' + (ok ? 'bg-emerald-500' : 'bg-slate-200');
     const name = document.createElement('span'); name.className = 'text-slate-500 truncate'; name.textContent = FIELD_LABELS[key];
     left.append(pip, name);
-    const pts = document.createElement('span'); pts.className = 'font-bold flex-shrink-0 ' + (ok ? 'text-emerald-600' : 'text-slate-300');
+    const pts = document.createElement('span'); pts.className = 'font-bold flex-shrink-0 ' + (ok ? 'text-emerald-700' : 'text-slate-500');
     pts.textContent = (ok ? '+' : '0/') + FIELD_PTS[key];
     row.append(left, pts); bd.append(row);
   });
@@ -801,7 +828,7 @@ function paintRating(score, level, missing, fields) {
   const ul = document.getElementById('missing-fields');
   ul.replaceChildren();
   if (!missing.length) {
-    const li = document.createElement('li'); li.className = 'flex items-center gap-1.5 text-emerald-600 text-sm font-medium';
+    const li = document.createElement('li'); li.className = 'flex items-center gap-1.5 text-emerald-700 text-sm font-medium';
     li.innerHTML = '<svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> Все поля заполнены';
     ul.append(li);
   } else {
@@ -813,13 +840,7 @@ function paintRating(score, level, missing, fields) {
   }
   // Publish button
   const pubBtn = document.getElementById('publish-btn');
-  if (score < 40) {
-    pubBtn.className = pubBtn.className.replace(/bg-\S+/g, 'bg-amber-500');
-    pubBtn.textContent = 'Опубликовать (черновик)';
-  } else {
-    pubBtn.className = pubBtn.className.replace(/bg-\S+/g, 'bg-emerald-500');
-    pubBtn.textContent = 'Опубликовать в каталог';
-  }
+  pubBtn.textContent = score < 40 ? 'Опубликовать (черновик)' : 'Опубликовать в каталог';
 }
 
 // ── Publish ────────────────────────────────────────────────────────────
@@ -829,6 +850,9 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
   const topic  = document.getElementById('task-topic').value.trim();
   if (!title) { toast('Заполните название задачи', 'error'); return; }
   if (!topic) { toast('Укажите отрасль задачи', 'error'); return; }
+  const publishButton = document.getElementById('publish-btn');
+  if (publishButton.disabled) return;
+  publishButton.disabled = true;
   try {
     const resp = await fetch('/api/tasks', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -853,11 +877,12 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
     document.getElementById('biz-tasks-list').scrollIntoView({ behavior:'smooth', block:'start' });
   } catch(e) {
     toast('Ошибка публикации: ' + e.message, 'error');
-  }
+  } finally { publishButton.disabled = false; }
 });
 
 // ── Business Inbox ─────────────────────────────────────────────────────
 async function loadBizTasks() {
+  document.getElementById('biz-task-count').textContent = '…';
   const list = document.getElementById('biz-tasks-list');
   const empty = document.getElementById('empty-biz-tasks');
   // Skeleton
@@ -872,10 +897,12 @@ async function loadBizTasks() {
     const resp = await fetch('/api/tasks');
     if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
     const tasks = await resp.json();
+    document.getElementById('biz-task-count').textContent = tasks.length;
     list.replaceChildren();
     empty.classList.toggle('hidden', tasks.length > 0);
     tasks.forEach(t => list.append(renderBizTask(t)));
   } catch(e) {
+    document.getElementById('biz-task-count').textContent = '—';
     list.innerHTML = `<p class="text-sm text-rose-500 p-4">Не удалось загрузить задачи: ${e.message}</p>`;
     toast('Ошибка загрузки задач', 'error');
   }
@@ -883,27 +910,27 @@ async function loadBizTasks() {
 
 function renderBizTask(task) {
   const meta = LEVEL_META[task.readiness_level] || LEVEL_META.DRAFT;
-  const el = document.createElement('div');
-  el.className = 'rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm overflow-hidden';
+  const el = document.createElement('article');
+  el.className = 'biz-task';
   const proposalListId = 'proposal-list-' + (++bizTaskCardSequence);
   el.innerHTML = `
-    <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
-      <div class="min-w-0">
-        <h3 class="font-bold text-slate-900 text-base truncate">${esc(task.title || 'Задача')}</h3>
-        <p class="mt-0.5 text-xs text-slate-400">${esc(task.topic || '')}</p>
+    <div class="biz-task-heading">
+      <div class="biz-task-title">
+        <h3>${esc(task.title || 'Задача')}</h3>
+        <p class="mt-0.5 text-xs text-slate-500">${esc(task.topic || '')}</p>
       </div>
-      <div class="flex flex-wrap items-center justify-end gap-2 flex-shrink-0">
-        <span class="text-xs font-semibold text-slate-400">${task.rating}/100</span>
-        <span class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${meta.badge}">${meta.label}</span>
-        <button type="button" class="proposal-toggle inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 disabled:cursor-default disabled:border-transparent disabled:bg-transparent disabled:text-slate-400" aria-expanded="false" aria-controls="${proposalListId}" disabled>
+      <div class="biz-task-meta">
+        <span class="rating-small">${task.rating}/100</span>
+        <span class="status-chip ${meta.badge}">${meta.label}</span>
+        <button type="button" class="proposal-toggle" aria-expanded="false" aria-controls="${proposalListId}" disabled>
           <span class="proposal-count">Загружаем…</span>
-          <span class="proposal-action hidden sm:inline">Показать</span>
+          <span class="proposal-action sr-only">Показать</span>
           <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
         </button>
       </div>
     </div>
     <div id="${proposalListId}" class="proposals-container hidden border-t border-slate-100 bg-slate-50/40 px-5 py-4 sm:px-6 space-y-2.5" aria-live="polite">
-      <p class="text-sm text-slate-400">Загружаем отклики…</p>
+      <p class="text-sm text-slate-500">Загружаем отклики…</p>
     </div>`;
   const container = el.querySelector('.proposals-container');
   const toggle = el.querySelector('.proposal-toggle');
@@ -925,13 +952,13 @@ async function loadProposalsForTask(taskId, container, toggle) {
     container.replaceChildren();
     if (!proposals.length) {
       const emptyLabel = document.createElement('span');
-      emptyLabel.className = 'inline-flex items-center px-3 py-2 text-xs font-medium text-slate-400';
+      emptyLabel.className = 'proposal-empty';
       emptyLabel.textContent = 'Пока нет откликов';
       toggle.replaceWith(emptyLabel);
       container.remove();
       return;
     }
-    toggle.querySelector('.proposal-count').textContent = `Предложений: ${proposals.length}`;
+    toggle.querySelector('.proposal-count').textContent = `Отклики · ${proposals.length}`;
     toggle.disabled = false;
     proposals.forEach(p => container.append(renderProposal(p)));
   } catch(e) {
@@ -960,23 +987,16 @@ function renderProposal(proposal) {
     <p class="text-sm leading-5 text-slate-600 whitespace-pre-wrap">${esc(proposal.solution_idea)}</p>
     ${materialURL ? `
       <div class="mt-3 flex items-center gap-2">
-        <button type="button" class="btn-open-preview inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50/80 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition active:scale-95">
+        <a href="${esc(materialURL)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 underline underline-offset-4">
           <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
           Открыть материалы прототипа ↗
-        </button>
+        </a>
       </div>` : `
-      <div class="mt-2 text-xs text-slate-400 italic flex items-center gap-1">
+      <div class="mt-2 text-xs text-slate-500 italic flex items-center gap-1">
         <span>ℹ️</span> Рабочая ссылка на материалы прототипа не приложена
       </div>`}
     <div class="decision-actions mt-3 flex gap-2"></div>`;
 
-  const previewBtn = card.querySelector('.btn-open-preview');
-  if (previewBtn) {
-    previewBtn.addEventListener('click', () => {
-      const opened = window.open(materialURL, '_blank', 'noopener,noreferrer');
-      if (!opened) toast('Браузер заблокировал открытие ссылки', 'error');
-    });
-  }
   const actions = card.querySelector('.decision-actions');
   if (proposal.status === 'PENDING') {
     const accept = document.createElement('button');
@@ -1006,57 +1026,6 @@ function getPrototypeURL(value) {
   }
 }
 
-function showProposalPreview(proposal) {
-  document.getElementById('preview-team').textContent = proposal.team_name || proposal.team_id || 'Команда';
-  document.getElementById('preview-idea').textContent = proposal.solution_idea || '—';
-  const linkBox = document.getElementById('preview-link-box');
-  linkBox.replaceChildren();
-
-  const url = (proposal.plan || '').trim();
-  if (url) {
-    const wrap = document.createElement('div');
-    wrap.className = 'flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-indigo-50/60 rounded-xl border border-indigo-100';
-    wrap.innerHTML = `
-      <div class="min-w-0 flex-1">
-        <p class="text-xs font-mono text-indigo-900 break-all">${esc(url)}</p>
-        <p class="text-[11px] text-slate-500 mt-1">Репозиторий, интерактивное демо или архитектурная документация команды</p>
-      </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <button type="button" id="btn-copy-url" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 active:scale-95">Скопировать</button>
-        <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 transition">Открыть ↗</a>
-      </div>
-    `;
-    linkBox.append(wrap);
-    wrap.querySelector('#btn-copy-url').addEventListener('click', () => {
-      navigator.clipboard.writeText(url).then(() => toast('Ссылка скопирована в буфер', 'success')).catch(() => {});
-    });
-  } else {
-    linkBox.innerHTML = `
-      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500">
-        Ссылка не приложена. Команда проведёт демонстрацию на очном этапе или онлайн-встрече.
-      </div>
-    `;
-  }
-
-  const modal = document.getElementById('preview-modal');
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-}
-
-function closeProposalPreview() {
-  const modal = document.getElementById('preview-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-}
-
-document.getElementById('close-preview-modal').addEventListener('click', closeProposalPreview);
-document.getElementById('close-preview-btn').addEventListener('click', closeProposalPreview);
-document.getElementById('preview-modal').addEventListener('click', (e) => {
-  if (e.target.id === 'preview-modal') closeProposalPreview();
-});
-
 async function decideProposal(id, status, card) {
   card.querySelectorAll('button').forEach(b => b.disabled = true);
   try {
@@ -1079,7 +1048,11 @@ async function decideProposal(id, status, card) {
 }
 
 // ── Student Catalog ────────────────────────────────────────────────────
+let catalogLoadVersion = 0;
 async function loadCatalog() {
+  const version = ++catalogLoadVersion;
+  const count = document.getElementById('catalog-result-count');
+  count.textContent = 'Загружаем задачи…';
   const grid  = document.getElementById('tasks-grid');
   const empty = document.getElementById('empty-catalog');
   // Skeletons
@@ -1093,6 +1066,7 @@ async function loadCatalog() {
     </div>`).join('');
   empty.classList.add('hidden');
   await loadTeamMatchOptions();
+  if (version !== catalogLoadVersion) return;
   const topic = document.getElementById('filter-topic').value.trim();
   const level = document.getElementById('filter-level').value;
   const selectedTeam = catalogTeams.find(team => team.id === document.getElementById('team-match-select').value);
@@ -1103,6 +1077,9 @@ async function loadCatalog() {
     const resp = await fetch('/api/tasks' + (params.toString() ? '?' + params : ''));
     if (!resp.ok) throw new Error(resp.status);
     const tasks = await resp.json();
+    if (version !== catalogLoadVersion) return;
+    count.textContent = 'Найдено задач: ' + tasks.length;
+    document.getElementById('catalog-sort-label').textContent = selectedTeam ? 'Сначала совпадения с командой' : 'Сначала самые готовые';
     grid.replaceChildren();
     empty.classList.toggle('hidden', tasks.length > 0);
     const rankedTasks = tasks.map((task, index) => ({
@@ -1119,7 +1096,9 @@ async function loadCatalog() {
     }
     rankedTasks.forEach(item => grid.append(renderTaskCard(item.task, selectedTeam, item.match)));
   } catch(e) {
-    grid.innerHTML = `<p class="col-span-3 text-sm text-rose-500 p-4">Не удалось загрузить каталог: ${e.message}</p>`;
+    if (version !== catalogLoadVersion) return;
+    count.textContent = 'Каталог недоступен';
+    grid.innerHTML = '<p class="text-sm text-rose-700 p-4">Не удалось загрузить каталог. Попробуйте обновить список.</p>';
     toast('Ошибка загрузки каталога', 'error');
   }
 }
@@ -1132,7 +1111,7 @@ async function loadTeamMatchOptions() {
     const response = await fetch('/api/teams');
     if (!response.ok) throw new Error('HTTP ' + response.status);
     catalogTeams = await response.json();
-    select.replaceChildren(new Option('Показать задачи без учёта команды', ''));
+    select.replaceChildren(new Option('Все команды', ''));
     catalogTeams.forEach(team => {
       const label = team.focus ? `${team.name} · ${team.focus}` : team.name;
       select.add(new Option(label, team.id));
@@ -1175,14 +1154,14 @@ function calculateTeamTaskMatch(team, task) {
 
 function renderTeamTaskMatch(team, match) {
   const panel = document.createElement('div');
-  panel.className = 'mt-4 rounded-xl border border-violet-100 bg-violet-50/70 p-3';
+  panel.className = 'match-panel';
   const heading = document.createElement('div');
   heading.className = 'flex flex-wrap items-center justify-between gap-2';
   const label = document.createElement('span');
-  label.className = 'text-xs font-bold uppercase tracking-wide text-violet-800';
-  label.textContent = `Подходит команде ${team.name}`;
+  label.className = 'text-xs font-bold uppercase tracking-wide text-teal-800';
+  label.textContent = `Совпадения · ${team.name}`;
   const count = document.createElement('span');
-  count.className = 'rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-violet-700';
+  count.className = 'rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-teal-700';
   count.textContent = `${match.matchedSkills.length} из ${match.totalSkills} навыков`;
   heading.append(label, count);
   panel.append(heading);
@@ -1207,37 +1186,30 @@ function renderTeamTaskMatch(team, match) {
 
 function renderTaskCard(task, team = null, match = null) {
   const meta = LEVEL_META[task.readiness_level] || LEVEL_META.DRAFT;
-  const isPriority = task.readiness_level === 'PRIORITY';
   const card = document.createElement('article');
-  card.className = 'task-card flex flex-col rounded-3xl border bg-white shadow-sm overflow-hidden ' + (isPriority ? 'priority-ring border-orange-200' : 'border-slate-200');
+  card.className = 'task-card' + (task.readiness_level === 'PRIORITY' ? ' priority-ring' : '');
   const f = task.fields || {};
-  const preview = f.context_and_need || f.data_and_materials || 'Нажмите «Подать предложение», чтобы изучить задачу.';
+  const preview = f.context_and_need || f.data_and_materials || 'Откройте карточку, чтобы изучить вводные задачи.';
+  const rating = Math.min(100, Math.max(0, Number(task.rating) || 0));
   card.innerHTML = `
-    <div class="p-5 flex flex-col flex-1">
-      <div class="flex items-start justify-between gap-2">
-        <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">${esc(task.topic || 'Без темы')}</span>
-        <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold ${meta.badge}">${meta.label}</span>
+    <div class="task-card-body">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span class="task-topic">${esc(task.topic || 'Без темы')}</span>
+        <span class="status-chip ${meta.badge}">${meta.label}</span>
       </div>
-      <h2 class="mt-3 text-base font-bold text-slate-900 leading-snug">${esc(task.title || 'Задача')}</h2>
-      <p class="mt-2 flex-1 line-clamp-4 text-sm leading-6 text-slate-500">${esc(preview)}</p>
-      <!-- Rating bar -->
-      <div class="mt-4 space-y-1">
-        <div class="flex justify-between text-xs text-slate-400">
-          <span>Готовность задачи</span>
-          <span class="font-semibold">${task.rating || 0}/100</span>
-        </div>
-        <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-          <div class="mini-bar-fill h-full rounded-full ${meta.bar}" style="width:${task.rating||0}%"></div>
-        </div>
+      <h2>${esc(task.title || 'Задача')}</h2>
+      <p class="mt-3 flex-1 line-clamp-3 text-xs leading-6 text-slate-500">${esc(preview)}</p>
+      <div class="mt-6 space-y-2">
+        <div class="flex justify-between text-[10px] text-slate-500"><span>Полнота вводных</span><span class="font-bold text-slate-700">${rating} <span class="font-normal text-slate-500">/ 100</span></span></div>
+        <div class="h-1 rounded-full bg-slate-100 overflow-hidden"><div class="mini-bar-fill h-full rounded-full" style="width:${rating}%;background:${meta.stroke}"></div></div>
       </div>
     </div>
-    <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-5 py-3.5">
-      <button class="propose-btn inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/15 hover:brightness-110 transition active:scale-95">
-        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
-        Подать предложение
-      </button>
+    <div class="task-card-footer">
+      <button type="button" class="detail-btn text-button">Подробнее</button>
+      <button type="button" class="propose-btn btn-primary">Подать предложение <span aria-hidden="true">↗</span></button>
     </div>`;
-  if (team && match) card.querySelector('.p-5').append(renderTeamTaskMatch(team, match));
+  if (team && match) card.querySelector('.task-card-body').append(renderTeamTaskMatch(team, match));
+  card.querySelector('.detail-btn').addEventListener('click', () => openTaskDetails(task));
   card.querySelector('.propose-btn').addEventListener('click', () => openProposalModal(task));
   return card;
 }
@@ -1254,45 +1226,116 @@ document.getElementById('reload-tasks').addEventListener('click', loadCatalog);
 document.getElementById('filter-topic').addEventListener('keydown', e => { if (e.key === 'Enter') loadCatalog(); });
 document.getElementById('team-match-select').addEventListener('change', loadCatalog);
 
-// ── Proposal Modal ─────────────────────────────────────────────────────
+// ── Accessible task and proposal dialogs ──────────────────────────────
+let activeDialog = null;
+let dialogReturnFocus = null;
+let detailTask = null;
+let proposalOpenVersion = 0;
+
+function showDialog(id) {
+  if (!activeDialog) dialogReturnFocus = document.activeElement;
+  else {
+    activeDialog.classList.add('hidden');
+    activeDialog.classList.remove('flex');
+  }
+  activeDialog = document.getElementById(id);
+  activeDialog.classList.remove('hidden');
+  activeDialog.classList.add('flex');
+  document.body.classList.add('modal-open');
+  document.querySelector('main').inert = true;
+  document.querySelector('header').inert = true;
+  document.querySelector('footer').inert = true;
+  activeDialog.querySelector('button, select, input, textarea').focus();
+}
+
+function closeModal() {
+  proposalOpenVersion++;
+  if (!activeDialog) return;
+  activeDialog.classList.add('hidden');
+  activeDialog.classList.remove('flex');
+  activeDialog = null;
+  document.body.classList.remove('modal-open');
+  document.querySelector('main').inert = false;
+  document.querySelector('header').inert = false;
+  document.querySelector('footer').inert = false;
+  if (dialogReturnFocus?.isConnected) dialogReturnFocus.focus();
+  dialogReturnFocus = null;
+}
+
+function openTaskDetails(task) {
+  detailTask = task;
+  const meta = LEVEL_META[task.readiness_level] || LEVEL_META.DRAFT;
+  document.getElementById('task-detail-title').textContent = task.title || 'Задача';
+  document.getElementById('task-detail-topic').textContent = task.topic || 'Без темы';
+  const level = document.getElementById('task-detail-level');
+  level.className = 'status-chip mt-3 ' + meta.badge;
+  level.textContent = meta.label + ' · ' + task.rating + '/100';
+  const fields = document.getElementById('task-detail-fields');
+  fields.replaceChildren();
+  Object.entries(FIELD_LABELS).forEach(([key, label]) => {
+    const row = document.createElement('div');
+    const term = document.createElement('dt');
+    const value = document.createElement('dd');
+    term.textContent = label;
+    value.textContent = task.fields?.[key] || 'Пока не указано';
+    row.append(term, value);
+    fields.append(row);
+  });
+  showDialog('task-modal');
+}
+
 async function openProposalModal(task) {
+  const version = ++proposalOpenVersion;
   selectedTask = task;
   document.getElementById('proposal-task-title').textContent = task.title || '';
-  document.getElementById('proposal-idea').value = '';
-  document.getElementById('proposal-link').value = '';
-  document.getElementById('proposal-task-title').textContent = '';
-
+  document.getElementById('proposal-form').reset();
   const select = document.getElementById('proposal-team');
-  select.replaceChildren(new Option('— Выберите команду —', ''));
+  const submit = document.querySelector('#proposal-form [type=submit]');
+  submit.textContent = 'Отправить предложение';
+  select.replaceChildren(new Option('Загружаем команды…', ''));
+  select.disabled = true;
+  submit.disabled = true;
+  showDialog('proposal-modal');
   try {
     const resp = await fetch('/api/teams');
     if (!resp.ok) throw new Error();
     const teams = await resp.json();
+    if (version !== proposalOpenVersion) return;
+    select.replaceChildren(new Option('Выберите команду', ''));
     teams.forEach(t => select.add(new Option(t.name + (t.focus ? ' — ' + t.focus : ''), t.id)));
-  } catch(_) {
-    [['team-1','Data Pioneers'],['team-2','Code Crafters'],['team-3','Green Minds'],['team-4','Route Masters'],['team-5','Edu Innovators']]
-      .forEach(([id, name]) => select.add(new Option(name, id)));
+    const teamId = document.getElementById('team-match-select').value;
+    if (teams.some(t => t.id === teamId)) select.value = teamId;
+    select.disabled = !teams.length;
+    submit.disabled = !teams.length;
+    if (!teams.length) select.replaceChildren(new Option('Нет доступных команд', ''));
+  } catch (_) {
+    if (version !== proposalOpenVersion) return;
+    select.replaceChildren(new Option('Не удалось загрузить команды', ''));
+    toast('Не удалось загрузить команды. Закройте окно и попробуйте ещё раз.', 'error');
   }
-
-  const modal = document.getElementById('proposal-modal');
-  document.getElementById('proposal-task-title').textContent = task.title;
-  modal.classList.remove('hidden'); modal.classList.add('flex');
-  select.focus();
 }
 
-function closeModal() {
-  const modal = document.getElementById('proposal-modal');
-  modal.classList.add('hidden'); modal.classList.remove('flex');
-}
-
-document.getElementById('close-modal').addEventListener('click', closeModal);
-document.getElementById('cancel-modal').addEventListener('click', closeModal);
-document.getElementById('proposal-modal').addEventListener('click', e => { if (e.target.id === 'proposal-modal') closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+['close-modal', 'cancel-modal', 'close-task-modal'].forEach(id => document.getElementById(id).addEventListener('click', closeModal));
+['proposal-modal', 'task-modal'].forEach(id => document.getElementById(id).addEventListener('click', e => {
+  if (e.target.id === id) closeModal();
+}));
+document.getElementById('detail-propose-btn').addEventListener('click', () => {
+  if (detailTask) openProposalModal(detailTask);
+});
+document.addEventListener('keydown', e => {
+  if (!activeDialog) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+  if (e.key !== 'Tab') return;
+  const focusable = [...activeDialog.querySelectorAll('button, a[href], select, input, textarea, [tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 document.getElementById('proposal-form').addEventListener('submit', async e => {
   e.preventDefault();
   if (!selectedTask) return;
+  const version = proposalOpenVersion;
   const btn = e.target.querySelector('[type=submit]');
   btn.disabled = true; btn.textContent = 'Отправляем…';
   try {
@@ -1307,12 +1350,11 @@ document.getElementById('proposal-form').addEventListener('submit', async e => {
     });
     if (!resp.ok) { const t = await resp.text(); throw new Error(t || resp.status); }
     toast('Предложение отправлено!', 'success');
-    e.target.reset();
-    setTimeout(closeModal, 800);
+    if (version === proposalOpenVersion) { e.target.reset(); closeModal(); }
   } catch(err) {
     toast('Ошибка: ' + err.message, 'error');
   } finally {
-    btn.disabled = false; btn.textContent = 'Отправить предложение';
+    if (version === proposalOpenVersion || !activeDialog) { btn.disabled = false; btn.textContent = 'Отправить предложение'; }
   }
 });
 

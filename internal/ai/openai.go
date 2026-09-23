@@ -16,7 +16,7 @@ import (
 
 const openAIEndpoint = "https://api.openai.com/v1/chat/completions"
 const openAIModel = "gpt-4o-mini"
-const openAITimeout = 7 * time.Second
+const openAITimeout = 4 * time.Second
 
 type openAIAnalyzer struct {
 	apiKey string

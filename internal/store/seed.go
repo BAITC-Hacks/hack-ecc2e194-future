@@ -88,11 +88,11 @@ func Seed(db *sql.DB) error {
 	}
 
 	proposals := []domain.Proposal{
-		{ID: "prop-1", TaskID: "task-3", TeamID: "team-1", SolutionIdea: "Применим LSTM для предсказания аномального потребления. Дашборд на Plotly Dash с алертами по email.", Plan: "https://github.com/example/energy-ml", Status: "PENDING"},
-		{ID: "prop-2", TaskID: "task-3", TeamID: "team-3", SolutionIdea: "IoT-стрим через MQTT → InfluxDB → Grafana. Алерты через Telegram-бота.", Status: "PENDING"},
-		{ID: "prop-3", TaskID: "task-4", TeamID: "team-5", SolutionIdea: "Collaborative Filtering + content-based гибрид. FastAPI + простой React-интерфейс.", Plan: "https://edu-rec.example.com", Status: "PENDING"},
-		{ID: "prop-4", TaskID: "task-5", TeamID: "team-2", SolutionIdea: "WebSocket-дашборд на React + Leaflet карта. Service Worker для push-уведомлений.", Plan: "https://air-dashboard.example.com", Status: "PENDING"},
-		{ID: "prop-5", TaskID: "task-5", TeamID: "team-3", SolutionIdea: "Python + MQTT subscriber, Grafana + GeoMap panel, Alert Manager для SMS.", Status: "PENDING"},
+		{ID: "prop-1", TaskID: "task-3", TeamID: "team-1", SolutionIdea: "Применим LSTM для предсказания аномального потребления. Дашборд на Plotly Dash с алертами по email.", Plan: "", Status: "PENDING"},
+		{ID: "prop-2", TaskID: "task-3", TeamID: "team-3", SolutionIdea: "IoT-стрим через MQTT → InfluxDB → Grafana. Алерты через Telegram-бота.", Plan: "", Status: "PENDING"},
+		{ID: "prop-3", TaskID: "task-4", TeamID: "team-5", SolutionIdea: "Collaborative Filtering + content-based гибрид. FastAPI + простой React-интерфейс.", Plan: "", Status: "PENDING"},
+		{ID: "prop-4", TaskID: "task-5", TeamID: "team-2", SolutionIdea: "WebSocket-дашборд на React + Leaflet карта. Service Worker для push-уведомлений.", Plan: "", Status: "PENDING"},
+		{ID: "prop-5", TaskID: "task-5", TeamID: "team-3", SolutionIdea: "Python + MQTT subscriber, Grafana + GeoMap panel, Alert Manager для SMS.", Plan: "", Status: "PENDING"},
 	}
 
 	tx, err := db.Begin()

@@ -113,7 +113,7 @@ func (h *taskHandler) proposals(w http.ResponseWriter, r *http.Request) {
 	}
 	// Path: /api/tasks/{id}/proposals  → parts[2] = id
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-	if len(parts) != 4 {
+	if len(parts) != 4 || parts[0] != "api" || parts[1] != "tasks" || parts[2] == "" || parts[3] != "proposals" {
 		http.NotFound(w, r)
 		return
 	}

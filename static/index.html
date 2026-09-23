@@ -13,12 +13,75 @@
       --indigo-dark: #3730a3;
       color-scheme: light;
     }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #f1f5f9; }
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, sans-serif;
+      isolation: isolate;
+      background-color: #f8fafc;
+      background-image:
+        radial-gradient(ellipse at 8% 2%, rgba(99,102,241,.14), transparent 34rem),
+        radial-gradient(ellipse at 96% 24%, rgba(139,92,246,.12), transparent 30rem),
+        radial-gradient(ellipse at 46% 100%, rgba(14,165,233,.08), transparent 36rem),
+        linear-gradient(145deg, #f8fafc 0%, #f1f5f9 48%, #f8fafc 100%);
+      background-attachment: fixed;
+    }
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      background-image:
+        linear-gradient(rgba(99,102,241,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,.035) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
+    }
+    .hero-panel {
+      isolation: isolate;
+    }
+    .hero-panel::after {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(circle at 78% 18%, rgba(255,255,255,.2), transparent 15rem),
+        radial-gradient(circle at 28% 115%, rgba(129,140,248,.3), transparent 24rem);
+    }
+    .hero-sidecard {
+      width: min(100%, 18rem);
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 1.25rem;
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 16px 40px rgba(30,27,75,.14);
+      backdrop-filter: blur(12px);
+    }
+    .hero-step-number {
+      display: grid;
+      width: 1.7rem;
+      height: 1.7rem;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: .65rem;
+      background: rgba(255,255,255,.12);
+      color: white;
+      font-size: .7rem;
+      font-weight: 800;
+    }
+
+    header {
+      box-shadow: 0 1px 0 rgba(148,163,184,.12), 0 12px 32px rgba(15,23,42,.045);
+    }
 
     /* ── Tabs ── */
     .tab-btn { transition: all .2s; }
     .tab-btn[aria-selected="true"]  { background: #fff; color: #1e293b; box-shadow: 0 1px 4px #00000018; }
-    .tab-btn[aria-selected="false"] { color: #94a3b8; }
+    .tab-btn[aria-selected="false"] { color: #64748b; }
+    .tab-btn[aria-selected="false"]:hover { color: #4338ca; background: rgba(255,255,255,.62); }
 
     /* ── Wizard steps ── */
     .step-dot { transition: all .25s; }
@@ -32,9 +95,18 @@
     .gauge-progress { transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1); }
 
     /* ── Cards ── */
-    .task-card { transition: transform .18s, box-shadow .18s; }
-    .task-card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px #00000012; }
-    .priority-ring { box-shadow: 0 0 0 2px #fed7aa, 0 0 0 4px #ffedd5; }
+    .task-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .task-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(30,41,59,.12); }
+    .priority-ring { box-shadow: 0 0 0 2px #fed7aa, 0 0 0 5px rgba(255,237,213,.72), 0 18px 42px rgba(249,115,22,.09); }
+
+    #step1-card, #questions-section, #tasks-grid > article,
+    #student-panel > .flex, #empty-catalog {
+      box-shadow: 0 16px 38px rgba(30,41,59,.055);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
 
     /* ── Inputs ── */
     input, textarea, select {
@@ -118,14 +190,15 @@
   <section id="business-panel" class="space-y-8">
 
     <!-- Hero -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 p-8 text-white shadow-2xl shadow-indigo-500/20 sm:p-10">
+    <div class="hero-panel relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 p-8 text-white shadow-2xl shadow-indigo-500/20 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
       <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5"></div>
       <div class="absolute -bottom-10 right-24 h-40 w-40 rounded-full bg-white/5"></div>
-      <p class="text-sm font-semibold uppercase tracking-[.18em] text-indigo-200">Кабинет бизнеса</p>
-      <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Опишите потребность<br>или проблему бизнеса</h1>
-      <p class="mt-3 max-w-xl text-indigo-200">AI уточнит вводные, соберёт карточку и рассчитает рейтинг готовности. Студенческие команды сами выберут задачу и предложат решение.</p>
-      <!-- Progress steps -->
-      <div class="mt-8 flex items-center gap-0">
+      <div class="relative z-10 min-w-0 flex-1">
+        <p class="text-sm font-semibold uppercase tracking-[.18em] text-indigo-200">Кабинет бизнеса</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Опишите потребность<br>или проблему бизнеса</h1>
+        <p class="mt-3 max-w-xl text-indigo-200">AI уточнит вводные, соберёт карточку и рассчитает рейтинг готовности. Студенческие команды сами выберут задачу и предложат решение.</p>
+        <!-- Progress steps -->
+        <div class="mt-8 flex items-center gap-0">
         <div id="step-1-wrap" class="flex items-center gap-2">
           <div id="step-1-dot" class="step-dot active h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
           <span class="hidden sm:block text-sm font-medium text-indigo-100">Черновик</span>
@@ -146,6 +219,18 @@
           <span class="hidden sm:block text-sm font-medium text-indigo-300">Опубликовано</span>
         </div>
       </div>
+      </div>
+      <aside class="hero-sidecard relative z-10 hidden p-5 lg:block" aria-label="Этапы создания задачи">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-[.14em] text-indigo-100">Путь задачи</span>
+          <span class="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/90">3 этапа</span>
+        </div>
+        <div class="mt-5 space-y-4">
+          <div class="flex items-center gap-3"><span class="hero-step-number">01</span><div><p class="text-sm font-semibold text-white">Опишите идею</p><p class="mt-0.5 text-xs text-indigo-100/75">Свободным текстом</p></div></div>
+          <div class="flex items-center gap-3"><span class="hero-step-number">02</span><div><p class="text-sm font-semibold text-white">Уточните детали</p><p class="mt-0.5 text-xs text-indigo-100/75">AI подскажет, чего не хватает</p></div></div>
+          <div class="flex items-center gap-3"><span class="hero-step-number">03</span><div><p class="text-sm font-semibold text-white">Получите отклики</p><p class="mt-0.5 text-xs text-indigo-100/75">Команды увидят задачу в каталоге</p></div></div>
+        </div>
+      </aside>
     </div>
 
     <!-- Step 1: Draft -->
@@ -347,11 +432,25 @@
   <!-- ╔══════ STUDENT PANEL ══════╗ -->
   <section id="student-panel" class="hidden space-y-7">
     <!-- Hero -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 p-8 text-white shadow-2xl shadow-violet-500/20 sm:p-10">
+    <div class="hero-panel relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 p-8 text-white shadow-2xl shadow-violet-500/20 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
       <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5"></div>
-      <p class="text-sm font-semibold uppercase tracking-[.18em] text-violet-200">Каталог студента</p>
-      <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Найдите задачу для команды</h1>
-      <p class="mt-3 max-w-xl text-violet-200">Изучите задачи бизнеса, выберите интересную и предложите своё решение. Команды выбирают сами — никаких назначений.</p>
+      <div class="relative z-10 min-w-0 flex-1">
+        <p class="text-sm font-semibold uppercase tracking-[.18em] text-violet-200">Каталог студента</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Найдите задачу для команды</h1>
+        <p class="mt-3 max-w-xl text-violet-200">Изучите задачи бизнеса, выберите интересную и предложите своё решение. Команды выбирают сами — никаких назначений.</p>
+      </div>
+      <aside class="hero-sidecard relative z-10 hidden p-5 lg:block" aria-label="Подбор задач с учётом команды">
+        <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-violet-100">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591L15 12.75V18a.75.75 0 01-.75.75H9.75A.75.75 0 019 18v-5.25L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+          Умный подбор
+        </div>
+        <p class="mt-3 text-sm leading-5 text-white/90">Покажем, где опыт команды может пригодиться</p>
+        <div class="mt-4 space-y-2.5">
+          <div class="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2"><span class="text-xs text-violet-100">Навыки команды</span><span class="text-xs font-semibold text-white">↔ задача</span></div>
+          <div class="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2"><span class="text-xs text-violet-100">Направление команды</span><span class="text-xs font-semibold text-white">↔ тема</span></div>
+        </div>
+        <p class="mt-3 text-[11px] leading-4 text-violet-100/70">Подбор помогает сориентироваться — решение за командой.</p>
+      </aside>
     </div>
 
     <!-- Filters -->
